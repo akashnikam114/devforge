@@ -1,0 +1,335 @@
+{
+  "always": [
+    "rbac"
+  ],
+  "createDefaults": {
+    "projectStructure": true,
+    "api": true,
+    "adminPanel": false,
+    "adminAuth": false,
+    "adminUiTheme": false,
+    "adminAssets": false,
+    "commonCore": false,
+    "middleware": false,
+    "firebase": false,
+    "excelExport": true,
+    "pdfExport": false,
+    "pwa": false
+  },
+  "baseDirectories": [
+    "app/Constants",
+    "app/Jobs",
+    "app/Listeners",
+    "app/Mails",
+    "app/Notifications",
+    "app/Http/Controllers/Admin/Auth",
+    "app/Http/Controllers/Api/V1",
+    "app/Http/Middleware",
+    "app/Http/Resources",
+    "public/assets/css",
+    "public/assets/fonts",
+    "public/assets/images",
+    "public/assets/js",
+    "resources/views/admin/auth",
+    "resources/views/admin/layouts",
+    "resources/views/errors",
+    "resources/views/pages",
+    "routes/api/v1"
+  ],
+  "features": [
+    {
+      "id": "database",
+      "title": "Database Configuration",
+      "group": "Foundation",
+      "description": "Validates database credentials and updates .env plus .env.example. This is already asked during project creation."
+    },
+    {
+      "id": "rbac",
+      "title": "RBAC Module",
+      "group": "Foundation",
+      "description": "Creates the roles table and adds role_id to users. DevForge always includes this during Laravel project creation.",
+      "always": true,
+      "files": [
+        {
+          "source": "rbac/app/Models/Role.php",
+          "target": "app/Models/Role.php"
+        },
+        {
+          "source": "rbac/database/migrations/2024_01_01_000001_create_roles_table.php",
+          "target": "database/migrations/2024_01_01_000001_create_roles_table.php"
+        },
+        {
+          "source": "rbac/database/migrations/2024_01_01_000002_add_role_id_to_users_table.php",
+          "target": "database/migrations/2024_01_01_000002_add_role_id_to_users_table.php"
+        }
+      ]
+    },
+    {
+      "id": "project-structure",
+      "title": "Project Structure",
+      "group": "Foundation",
+      "description": "Creates Helpers, Services, Traits, Constants, Jobs, Mails, Notifications, Listeners, assets, errors, pages, and admin/API folders.",
+      "directories": [
+        "app/Helpers",
+        "app/Services",
+        "app/Traits"
+      ],
+      "autoloadFiles": [
+        "app/Helpers/helpers.php"
+      ],
+      "files": [
+        {
+          "source": "project-structure/app/Helpers/helpers.php",
+          "target": "app/Helpers/helpers.php"
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "title": "API Feature",
+      "group": "API",
+      "description": "Creates the API v1 route file, BaseApiController, API controller folder, and RouteServiceProvider mapping.",
+      "files": [
+        {
+          "source": "api/routes/api/v1/api.php",
+          "target": "routes/api/v1/api.php"
+        },
+        {
+          "source": "api/app/Http/Controllers/Api/BaseApiController.php",
+          "target": "app/Http/Controllers/Api/BaseApiController.php"
+        }
+      ]
+    },
+    {
+      "id": "admin-panel",
+      "title": "Admin Panel Feature",
+      "group": "Admin",
+      "description": "Creates admin dashboard controller, dashboard view, layout files, and admin route foundation.",
+      "includes": [
+        "project-structure",
+        "admin-ui-theme"
+      ],
+      "append": [
+        {
+          "source": "admin-panel/routes/web.php",
+          "target": "routes/web.php",
+          "marker": "Route::prefix('admin')->name('admin.')->group"
+        }
+      ],
+      "files": [
+        {
+          "source": "admin-panel/app/Http/Controllers/Admin/DashboardController.php",
+          "target": "app/Http/Controllers/Admin/DashboardController.php"
+        },
+        {
+          "source": "admin-panel/resources/views/admin/layouts/app.blade.php",
+          "target": "resources/views/admin/layouts/app.blade.php"
+        },
+        {
+          "source": "admin-panel/resources/views/admin/layouts/header.blade.php",
+          "target": "resources/views/admin/layouts/header.blade.php"
+        },
+        {
+          "source": "admin-panel/resources/views/admin/layouts/sidebar.blade.php",
+          "target": "resources/views/admin/layouts/sidebar.blade.php"
+        },
+        {
+          "source": "admin-panel/resources/views/admin/layouts/flash.blade.php",
+          "target": "resources/views/admin/layouts/flash.blade.php"
+        },
+        {
+          "source": "admin-panel/resources/views/admin/layouts/footer.blade.php",
+          "target": "resources/views/admin/layouts/footer.blade.php"
+        },
+        {
+          "source": "admin-panel/resources/views/admin/dashboard.blade.php",
+          "target": "resources/views/admin/dashboard.blade.php"
+        }
+      ]
+    },
+    {
+      "id": "admin-auth",
+      "title": "Admin Auth Feature",
+      "group": "Admin",
+      "description": "Creates admin login controller, login view, logout/change-password routes, and auth-ready admin structure.",
+      "includes": [
+        "admin-panel"
+      ],
+      "files": [
+        {
+          "source": "admin-auth/app/Http/Controllers/Admin/Auth/LoginController.php",
+          "target": "app/Http/Controllers/Admin/Auth/LoginController.php"
+        },
+        {
+          "source": "admin-auth/resources/views/admin/auth/login.blade.php",
+          "target": "resources/views/admin/auth/login.blade.php"
+        }
+      ]
+    },
+    {
+      "id": "admin-ui-theme",
+      "title": "Admin UI Theme Feature",
+      "group": "Admin",
+      "description": "Adds dynamic theme configuration for app name, primary color, secondary color, and panel branding.",
+      "env": {
+        "DEVFORGE_UI_APP_NAME": "\"__PROJECT_NAME__\"",
+        "DEVFORGE_UI_PRIMARY_COLOR": "#049C9C",
+        "DEVFORGE_UI_SECONDARY_COLOR": "#037a7a",
+        "DEVFORGE_UI_PANEL_TITLE": "\"Admin Panel\"",
+        "DEVFORGE_UI_PANEL_DESCRIPTION": "\"Manage users, settings, reports, and application operations from one place.\""
+      },
+      "files": [
+        {
+          "source": "admin-ui-theme/config/devforge-ui.php",
+          "target": "config/devforge-ui.php"
+        }
+      ]
+    },
+    {
+      "id": "admin-assets",
+      "title": "Admin Assets Feature",
+      "group": "Admin",
+      "description": "Copies the reusable admin CSS, JavaScript, fonts, and images required by the admin layout.",
+      "copyDirectories": [
+        {
+          "source": "admin-assets/public/assets/admin",
+          "target": "public/assets/admin"
+        }
+      ]
+    },
+    {
+      "id": "common-core",
+      "title": "Common Core Modules Feature",
+      "group": "Admin",
+      "description": "Adds common admin modules for BusinessSetting, GeneralSetting, restrictions, banners, push notifications, helpers, encryption, Firebase service, admin auth, migrations, reusable error pages, and admin views.",
+      "autoloadFiles": [
+        "app/Helpers/BusinessSettingHelper.php",
+        "app/Helpers/EncryptionHelper.php",
+        "app/Helpers/GeneralHelper.php"
+      ],
+      "env": {
+        "DEVFORGE_UI_APP_NAME": "\"__PROJECT_NAME__\"",
+        "DEVFORGE_UI_PRIMARY_COLOR": "#049C9C",
+        "DEVFORGE_UI_SECONDARY_COLOR": "#037a7a",
+        "DEVFORGE_UI_PANEL_TITLE": "\"Admin Panel\"",
+        "DEVFORGE_UI_PANEL_DESCRIPTION": "\"Manage users, settings, reports, and application operations from one place.\""
+      },
+      "append": [
+        {
+          "source": "common-core/routes/web.php",
+          "target": "routes/web.php",
+          "marker": "Route::prefix('admin')->name('admin.')->group"
+        }
+      ],
+      "copyDirectories": [
+        {
+          "source": "common-core/app",
+          "target": "app"
+        },
+        {
+          "source": "common-core/database",
+          "target": "database"
+        },
+        {
+          "source": "common-core/resources",
+          "target": "resources"
+        },
+        {
+          "source": "common-core/config",
+          "target": "config"
+        },
+        {
+          "source": "admin-assets/public/assets/admin",
+          "target": "public/assets/admin"
+        }
+      ]
+    },
+    {
+      "id": "middleware",
+      "title": "Middleware Feature",
+      "group": "Security",
+      "description": "Creates starter middleware for admin maintenance, secure headers, API logging, and input sanitization.",
+      "files": [
+        {
+          "source": "middleware/app/Http/Middleware/AdminMaintenance.php",
+          "target": "app/Http/Middleware/AdminMaintenance.php"
+        },
+        {
+          "source": "middleware/app/Http/Middleware/SecureHeaders.php",
+          "target": "app/Http/Middleware/SecureHeaders.php"
+        },
+        {
+          "source": "middleware/app/Http/Middleware/ApiLoggerMiddleware.php",
+          "target": "app/Http/Middleware/ApiLoggerMiddleware.php"
+        },
+        {
+          "source": "middleware/app/Http/Middleware/ApiAuthenticate.php",
+          "target": "app/Http/Middleware/ApiAuthenticate.php"
+        },
+        {
+          "source": "middleware/app/Http/Middleware/AppMaintenance.php",
+          "target": "app/Http/Middleware/AppMaintenance.php"
+        },
+        {
+          "source": "middleware/app/Http/Middleware/NormalizeApiResponse.php",
+          "target": "app/Http/Middleware/NormalizeApiResponse.php"
+        },
+        {
+          "source": "middleware/app/Http/Middleware/SanitizeInput.php",
+          "target": "app/Http/Middleware/SanitizeInput.php"
+        }
+      ]
+    },
+    {
+      "id": "firebase",
+      "title": "Firebase Feature",
+      "group": "Integrations",
+      "description": "Creates Firebase config placeholders, service folder, and .env keys for projects that need Firebase integration.",
+      "env": {
+        "FIREBASE_PROJECT_ID": "",
+        "FIREBASE_CREDENTIALS": "",
+        "FIREBASE_DATABASE_URL": ""
+      },
+      "files": [
+        {
+          "source": "firebase/config/firebase.php",
+          "target": "config/firebase.php"
+        },
+        {
+          "source": "firebase/app/Services/Firebase/FirebaseService.php",
+          "target": "app/Services/Firebase/FirebaseService.php"
+        }
+      ]
+    },
+    {
+      "id": "excel-export",
+      "title": "Excel Export Feature",
+      "group": "Reports",
+      "description": "Creates the Exports folder and SampleExport for maatwebsite/excel.",
+      "files": [
+        {
+          "source": "excel-export/app/Exports/SampleExport.php",
+          "target": "app/Exports/SampleExport.php"
+        }
+      ]
+    },
+    {
+      "id": "pdf-export",
+      "title": "PDF Export Feature",
+      "group": "Reports",
+      "description": "Creates a PDF service placeholder for barryvdh/laravel-dompdf usage.",
+      "files": [
+        {
+          "source": "pdf-export/app/Services/PdfService.php",
+          "target": "app/Services/PdfService.php"
+        }
+      ]
+    },
+    {
+      "id": "pwa",
+      "title": "PWA Feature",
+      "group": "Frontend",
+      "description": "Creates public/pwa with app icon, manifest, and service worker cache names based on the project name."
+    }
+  ]
+}

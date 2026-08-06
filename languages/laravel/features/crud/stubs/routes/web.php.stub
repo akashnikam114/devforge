@@ -1,0 +1,9 @@
+
+        \Illuminate\Support\Facades\Route::prefix('__ROUTE_NAME__')->group(function () {
+            \Illuminate\Support\Facades\Route::get('all', [\App\Http\Controllers\Admin\__CONTROLLER_CLASS__::class, 'index'])->name('__ROUTE_NAME__');
+            \Illuminate\Support\Facades\Route::get('add', [\App\Http\Controllers\Admin\__CONTROLLER_CLASS__::class, 'create']);
+            \Illuminate\Support\Facades\Route::post('add', [\App\Http\Controllers\Admin\__CONTROLLER_CLASS__::class, 'store']);
+            \Illuminate\Support\Facades\Route::get('edit/{id}', [\App\Http\Controllers\Admin\__CONTROLLER_CLASS__::class, 'edit']);
+            \Illuminate\Support\Facades\Route::post('edit/{id}', [\App\Http\Controllers\Admin\__CONTROLLER_CLASS__::class, 'update']);
+            \Illuminate\Support\Facades\Route::get('delete/{id}', [\App\Http\Controllers\Admin\__CONTROLLER_CLASS__::class, 'destroy']);
+__STATUS_ROUTE__        });

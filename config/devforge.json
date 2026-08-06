@@ -1,0 +1,7 @@
+{
+  "appName": "DevForge",
+  "commandName": "devforge",
+  "defaultOutputDirectory": "DevMerge",
+  "languagesDirectory": "languages",
+  "languageOptionName": "--lang"
+}

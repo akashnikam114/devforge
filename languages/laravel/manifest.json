@@ -1,0 +1,101 @@
+{
+  "id": "laravel",
+  "name": "Laravel",
+  "type": "framework",
+  "language": "php",
+  "description": "Laravel starter template for DevForge.",
+  "version": "0.1.0",
+  "entry": {
+    "templates": "templates",
+    "hooks": "hooks",
+    "recipes": "recipes"
+  },
+  "generator": {
+    "type": "laravel-composer",
+    "laravelVersion": "^10.0",
+    "minimumPhpVersion": "8.1.0",
+    "createProject": {
+      "command": "composer",
+      "args": [
+        "create-project",
+        "laravel/laravel:^10.0",
+        "--no-install",
+        "--no-scripts"
+      ]
+    },
+    "composerAuditBlockInsecure": false,
+    "composerRequireOptions": [
+      "--no-audit"
+    ],
+    "securityNotice": "Composer may block Laravel 10 because current security advisories affect the Laravel 10 dependency range. DevForge sets audit.block-insecure=false inside the generated Laravel project because Laravel 10 was explicitly requested. Review and upgrade dependencies before production use.",
+    "packages": [
+      "laravel/ui:^4.2",
+      "maatwebsite/excel:^3.1",
+      "google/auth:^1.44",
+      "tymon/jwt-auth:^2.0",
+      "yajra/laravel-datatables-oracle:^10.0",
+      "barryvdh/laravel-dompdf:^2.0",
+      "guzzlehttp/guzzle:^7.2"
+    ],
+    "setupCommands": [
+      [
+        "php",
+        "artisan",
+        "vendor:publish",
+        "--provider=Maatwebsite\\Excel\\ExcelServiceProvider",
+        "--tag=config",
+        "--force"
+      ],
+      [
+        "php",
+        "artisan",
+        "vendor:publish",
+        "--provider=Tymon\\JWTAuth\\Providers\\LaravelServiceProvider",
+        "--force"
+      ],
+      [
+        "php",
+        "artisan",
+        "jwt:secret",
+        "--force"
+      ],
+      [
+        "php",
+        "artisan",
+        "vendor:publish",
+        "--provider=Yajra\\DataTables\\DataTablesServiceProvider",
+        "--tag=config",
+        "--force"
+      ],
+      [
+        "php",
+        "artisan",
+        "vendor:publish",
+        "--provider=Barryvdh\\DomPDF\\ServiceProvider",
+        "--tag=config",
+        "--force"
+      ],
+      [
+        "php",
+        "artisan",
+        "storage:link"
+      ],
+      [
+        "php",
+        "artisan",
+        "optimize:clear"
+      ]
+    ]
+  },
+  "nextSteps": [
+    "cd __PROJECT_PATH__",
+    "php artisan serve"
+  ],
+  "variables": [
+    {
+      "name": "projectName",
+      "description": "Name of the Laravel project to generate.",
+      "required": true
+    }
+  ]
+}

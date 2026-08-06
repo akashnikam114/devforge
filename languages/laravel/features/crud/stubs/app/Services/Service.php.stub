@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\__MODEL_CLASS__;
+
+class __SERVICE_CLASS__
+{
+    protected $model;
+
+    public function __construct()
+    {
+        $this->model = new __MODEL_CLASS__();
+    }
+
+    public function store(array $data = [])
+    {
+        return $this->model->create($this->onlyFillableData($data));
+    }
+
+    public function fetch(int $id = 0)
+    {
+        return $this->model->find($id);
+    }
+
+    public function fetchRecord(array $data = [])
+    {
+        return $this->model->orderBy('id', 'DESC');
+    }
+
+    public function update(int $id, array $data = [])
+    {
+        $record = $this->model->find($id);
+
+        if (!$record) {
+            return false;
+        }
+
+        return $record->update($this->onlyFillableData($data));
+    }
+
+    private function onlyFillableData(array $data = []): array
+    {
+        return array_intersect_key($data, array_flip([
+__FILLABLE_FIELDS__
+        ]));
+    }
+}

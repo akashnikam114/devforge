@@ -1,0 +1,31 @@
+{
+  "id": "node",
+  "name": "Node.js",
+  "type": "runtime",
+  "language": "javascript",
+  "description": "Node.js starter template for DevForge.",
+  "version": "0.1.0",
+  "entry": {
+    "templates": "templates",
+    "hooks": "hooks",
+    "recipes": "recipes"
+  },
+  "install": {
+    "enabled": true,
+    "command": "npm",
+    "args": [
+      "install"
+    ]
+  },
+  "nextSteps": [
+    "cd __PROJECT_PATH__",
+    "npm run dev"
+  ],
+  "variables": [
+    {
+      "name": "projectName",
+      "description": "Name of the Node.js project to generate.",
+      "required": true
+    }
+  ]
+}

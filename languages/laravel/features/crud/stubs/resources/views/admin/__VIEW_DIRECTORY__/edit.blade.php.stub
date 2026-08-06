@@ -1,0 +1,39 @@
+@extends('admin.layouts.app')
+@section('content')
+    <div class="nk-content-wrap">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <div class="nk-block-head-sub">
+                        <a class="back-to" href="{{ route('admin.__ROUTE_NAME__') }}" style="cursor:pointer;">
+                            <em class="icon ni ni-arrow-left"></em>
+                            <span>Back</span>
+                        </a>
+                    </div>
+                    <h3 class="nk-block-title page-title">Edit __TITLE_SINGULAR__</h3>
+                    <div class="nk-block-des">
+                        <p>Update __LOWER_SINGULAR__ details</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="nk-block nk-block-lg mt-3">
+            <div class="card card-bordered card-preview col-sm-8">
+                <div class="card-inner">
+                    <form method="POST" action="{{ url('admin/__ROUTE_NAME__/edit') }}/{{ $data->id }}">
+                        @csrf
+                        <div class="row g-4">
+                            @include('admin.__VIEW_DIRECTORY__._form', ['data' => $data])
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-lg btn-primary">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection

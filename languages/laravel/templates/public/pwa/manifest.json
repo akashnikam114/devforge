@@ -1,0 +1,21 @@
+{
+    "name": "__PROJECT_NAME__",
+    "short_name": "__PROJECT_SHORT_NAME__",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#1976d2",
+    "description": "__PROJECT_DESCRIPTION__",
+    "icons": [
+        {
+            "src": "app_icon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "app_icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

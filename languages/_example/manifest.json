@@ -1,0 +1,20 @@
+{
+  "id": "example",
+  "name": "Example",
+  "type": "language-or-framework",
+  "description": "Reference structure for adding a new DevForge template.",
+  "version": "0.1.0",
+  "entry": {
+    "templates": "templates",
+    "hooks": "hooks",
+    "recipes": "recipes"
+  },
+  "variables": [
+    {
+      "name": "projectName",
+      "description": "Name of the project to generate.",
+      "required": true
+    }
+  ]
+}
+

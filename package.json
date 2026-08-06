@@ -1,0 +1,13 @@
+{
+  "name": "devforge",
+  "version": "0.1.0",
+  "description": "CLI for generating starter templates for multiple coding languages and frameworks.",
+  "bin": {
+    "devforge": "./bin/devforge"
+  },
+  "scripts": {
+    "devforge": "node ./bin/devforge",
+    "sync-command": "node ./scripts/sync-command-name.js"
+  },
+  "license": "MIT"
+}
