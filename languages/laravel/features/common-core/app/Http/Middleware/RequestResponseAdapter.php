@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 
-class NormalizeApiResponse
+class RequestResponseAdapter
 {
     public function handle($request, Closure $next)
     {

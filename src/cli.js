@@ -2067,7 +2067,7 @@ function updateLaravelKernelMiddleware(projectDirectory) {
     );
 
     [
-      "\\App\\Http\\Middleware\\NormalizeApiResponse::class",
+      "\\App\\Http\\Middleware\\RequestResponseAdapter::class",
       "\\App\\Http\\Middleware\\ApiLoggerMiddleware::class",
       "\\App\\Http\\Middleware\\SanitizeInput::class"
     ].forEach((middleware) => {
@@ -2208,8 +2208,8 @@ function writeLaravelEnvironment(projectDirectory, projectName, databaseConfig, 
     "SESSION_LIFETIME=120",
     "",
     "MAIL_MAILER=smtp",
-    "MAIL_HOST=mailpit",
-    "MAIL_PORT=1025",
+    "MAIL_HOST=smtp.gmail.com",
+    "MAIL_PORT=null",
     "MAIL_USERNAME=null",
     "MAIL_PASSWORD=null",
     "MAIL_ENCRYPTION=null",

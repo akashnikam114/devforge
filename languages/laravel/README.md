@@ -106,7 +106,7 @@ Current feature ids:
 
 Admin UI setup applies the selected theme color to buttons, header/profile bar states, dropdown actions, form focus states, sidebar menu states, pagination, badges, dashboard card accents, and Select2 focus/highlight states. General Settings uses Select2 for language, date format, and time format. Business Settings uses Select2 for currency and OTP provider, while sensitive values such as `encryption_key` remain stored but are not shown in the admin panel.
 
-`NormalizeApiResponse` converts incoming request keys from `camelCase` to `snake_case` before controller processing and converts JSON response keys from `snake_case` back to `camelCase`.
+`RequestResponseAdapter` converts incoming request keys from `camelCase` to `snake_case` before controller processing and converts JSON response keys from `snake_case` back to `camelCase`.
 
 Middleware setup registers secure headers globally, keeps API request normalization/logging/sanitization in the API middleware group, and registers `api.auth`, `app.maintenance`, and `admin.maintenance` aliases. `AppServiceProvider` shares the common `appSetting` helper with all Blade views.
 
