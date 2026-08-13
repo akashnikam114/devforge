@@ -1,18 +1,22 @@
 <?php
 
-\Illuminate\Support\Facades\Route::get('{path}', function () {
+use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\DashboardController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('{path}', function () {
     return redirect()->route('admin.login');
 })->where('path', 'admin|login');
 
-\Illuminate\Support\Facades\Route::prefix('admin')->name('admin.')->group(function () {
-    \Illuminate\Support\Facades\Route::middleware('guest')->group(function () {
-        \Illuminate\Support\Facades\Route::get('login', [\App\Http\Controllers\Admin\Auth\LoginController::class, 'showLoginForm'])->name('login');
-        \Illuminate\Support\Facades\Route::post('login', [\App\Http\Controllers\Admin\Auth\LoginController::class, 'login']);
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+        Route::post('login', [LoginController::class, 'login']);
     });
 
-    \Illuminate\Support\Facades\Route::middleware('auth')->group(function () {
-        \Illuminate\Support\Facades\Route::get('dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
-        \Illuminate\Support\Facades\Route::post('change-password', [\App\Http\Controllers\Admin\Auth\LoginController::class, 'changePassword'])->name('password.change');
-        \Illuminate\Support\Facades\Route::post('logout', [\App\Http\Controllers\Admin\Auth\LoginController::class, 'logout'])->name('logout');
+    Route::middleware('auth')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::post('change-password', [LoginController::class, 'changePassword'])->name('password.change');
+        Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     });
 });

@@ -3,7 +3,7 @@ self.addEventListener('install', (event) => {
         caches.open('__PROJECT_SLUG__-cache').then((cache) => {
             return cache.addAll([
                 '/',
-                'app_icon.png'
+                'app-icon.png'
             ]);
         })
     );

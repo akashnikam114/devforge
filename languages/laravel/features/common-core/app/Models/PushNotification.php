@@ -13,5 +13,6 @@ class PushNotification extends Model
         'title',
         'description',
         'image',
+        'is_active',
     ];
 }

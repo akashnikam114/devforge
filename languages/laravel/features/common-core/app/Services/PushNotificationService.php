@@ -18,7 +18,8 @@ class PushNotificationService
         return $this->model->create([
             'title' => $data['title'],
             'description' => $data['description'],
-            'image' => $data['image']
+            'image' => $data['image'],
+            'is_active' => $data['is_active'] ?? 1
         ]);
     }
 
@@ -42,7 +43,8 @@ class PushNotificationService
 
         $fieldsToUpdate = [
             'title' => $data['title'],
-            'description' => $data['description']
+            'description' => $data['description'],
+            'is_active' => $data['is_active'] ?? $record->is_active
         ];
 
         if (isset($data['image'])) {

@@ -6,7 +6,7 @@
                 <div class="nk-block-head-content">
                     <h3 class="nk-block-title page-title">Restriction Setting</h3>
                     <div class="nk-block-des">
-                        <p>List of all restrictions</p>
+                        <p>List of all restriction settings</p>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                 "serverSide": true,
                 "searching": true,
                 "bLengthChange": true,
-                ajax: "{{ route('admin.restriction') }}",
+                ajax: "{{ route('admin.restriction_settings') }}",
                 "order": [[0, "desc"]],
                 responsive: !0,
                 autoFill: !0,

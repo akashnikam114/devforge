@@ -8,12 +8,12 @@
     "description": "__PROJECT_DESCRIPTION__",
     "icons": [
         {
-            "src": "app_icon.png",
+            "src": "app-icon.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "app_icon.png",
+            "src": "app-icon.png",
             "sizes": "512x512",
             "type": "image/png"
         }

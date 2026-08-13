@@ -38,6 +38,7 @@
                                 <th>Image</th>
                                 <th>Title</th>
                                 <th>Description</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -75,7 +76,7 @@
                                 var imageUrl = '{{ asset('storage') }}' + '/' + row.image;
                                 return '<img src="' + imageUrl + '" style="width:60px; height: 40px; border-radius: 4px;">';
                             } else {
-                                var imageUrl = '{{ asset('assets/admin/img/default-image.jpeg') }}';
+                                var imageUrl = '{{ asset('assets/admin/images/default-image.png') }}';
                                 return '<img src="' + imageUrl + '" style="width: 60px; height: 60px;">';
                             }
                         }
@@ -90,9 +91,44 @@
                             return `<span data-bs-toggle="tooltip" title="${escaped}" style="cursor:help;">${truncated}</span>`;
                         }
                     },
+                    { "mData": "is_active" },
                     { "mData": "action" }
                 ]
             });
+        }
+
+        function changeStatus(id, status) {
+            if ($.trim(id)) {
+                let statusText = status == 1 ? "activate" : "deactivate";
+                Swal.fire({
+                    title: 'Update Status?',
+                    text: "Do you want to " + statusText + " this?",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, change it!'
+                }).then(function(result) {
+                    if (result.value) {
+                        $.ajax({
+                            headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+                            url: "{{ url('admin/push_notifications/change-status') }}",
+                            type: "POST",
+                            dataType: "JSON",
+                            data: { id: id, status: status },
+                            success: function(response) {
+                                if (response.status == 'success') {
+                                    Swal.fire("Updated", response.message, "success");
+                                    $("#myTable").DataTable().ajax.reload(null, false);
+                                } else {
+                                    Swal.fire("Error!", response.message, "error");
+                                }
+                            },
+                            error: function(xhr, ajaxOptions, thrownError) {
+                                Swal.fire("Error!", "Something went wrong", "error");
+                            }
+                        });
+                    }
+                });
+            }
         }
 
         function deleteRecord(id) {
@@ -108,7 +144,7 @@
                         $.ajax({
                             headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
                             url: "{{ url('admin/push_notifications/delete') }}/" + id,
-                            type: "GET",
+                            type: "DELETE",
                             dataType: "JSON",
                             success: function(response) {
                                 if (response.status == 'success') {

@@ -20,17 +20,47 @@
                         <div class="row g-4">
                             @foreach ($data as $business)
                                 @if(!in_array($business->value, ["true", "false"]) && strlen($business->value) <= 64 && !in_array($business->key, ['privacy_policy', 'terms_and_conditions']))
+                                    @php
+                                        $selectOptions = [
+                                            'currency_symbol' => [
+                                                '₹' => 'INR - ₹',
+                                                '$' => 'USD - $',
+                                                '€' => 'EUR - €',
+                                                '£' => 'GBP - £',
+                                                'AED' => 'AED',
+                                            ],
+                                            'otp_provider' => [
+                                                'None' => 'None',
+                                                'Firebase' => 'Firebase',
+                                                'Twilio' => 'Twilio',
+                                                'Msg91' => 'MSG91',
+                                                'Custom' => 'Custom',
+                                            ],
+                                        ];
+                                    @endphp
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label class="form-label" for="{{ $business->key }}">
                                                 {{ ucwords(str_replace('_', ' ', $business->key)) }}
                                             </label>
                                             <div class="form-control-wrap">
-                                                <input type="text"
-                                                    class="form-control form-control-lg @error($business->key) is-invalid @enderror"
-                                                    name="{{ $business->key }}" id="{{ $business->key }}"
-                                                    value="{{ old($business->key, $business->value) }}"
-                                                    placeholder="{{ ucwords(str_replace('_', ' ', $business->key)) }}">
+                                                @if(array_key_exists($business->key, $selectOptions))
+                                                    <select class="form-select js-select2 @error($business->key) is-invalid @enderror"
+                                                        name="{{ $business->key }}" id="{{ $business->key }}" data-ui="lg"
+                                                        data-search="off" data-placeholder="Select {{ ucwords(str_replace('_', ' ', $business->key)) }}">
+                                                        @foreach ($selectOptions[$business->key] as $value => $label)
+                                                            <option value="{{ $value }}" {{ old($business->key, $business->value) === $value ? 'selected' : '' }}>
+                                                                {{ $label }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                @else
+                                                    <input type="text"
+                                                        class="form-control form-control-lg @error($business->key) is-invalid @enderror"
+                                                        name="{{ $business->key }}" id="{{ $business->key }}"
+                                                        value="{{ old($business->key, $business->value) }}"
+                                                        placeholder="{{ ucwords(str_replace('_', ' ', $business->key)) }}">
+                                                @endif
                                                 @error($business->key)
                                                     <span class="invalid-feedback">
                                                         <strong>{{ $message }}</strong>
@@ -122,4 +152,3 @@
 @section('scriptJs')
     <script src="{{ asset('assets/admin/js/quill-handler.js') }}"></script>
 @endsection
-

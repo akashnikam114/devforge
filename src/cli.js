@@ -125,6 +125,8 @@ function printUsage(config) {
   console.log("  --yes            Confirm install/setup prompts for non-interactive runs.");
   console.log("  --feature NAME   Add a Laravel feature directly without the numbered prompt.");
   console.log("  --fields LIST    CRUD fields, for example name:string,description:text,is_active:boolean.");
+  console.log("  --firebase-project NAME       Firebase project name for Firebase setup.");
+  console.log("  --firebase-credentials PATH   Firebase service-account .json file path.");
   console.log("  --force          Allow CRUD files for the same module to be overwritten.");
   console.log("");
   console.log(`Generated projects are created inside ${config.defaultOutputDirectory}/.`);
@@ -284,7 +286,12 @@ function replaceTemplateVariables(content, variables) {
     .replaceAll("__PROJECT_NAME__", variables.projectName)
     .replaceAll("__PROJECT_SLUG__", variables.projectSlug)
     .replaceAll("__PROJECT_SHORT_NAME__", variables.projectShortName || variables.projectName)
-    .replaceAll("__PROJECT_DESCRIPTION__", variables.projectDescription || `${variables.projectName} application.`);
+    .replaceAll("__PROJECT_DESCRIPTION__", variables.projectDescription || `${variables.projectName} application.`)
+    .replaceAll("__CURRENCY_SYMBOL__", variables.currencySymbol || "USD");
+}
+
+function getCurrencySymbolForTimezone(timezone) {
+  return timezone === "Asia/Kolkata" ? "₹" : "USD";
 }
 
 function isBinaryTemplateFile(filePath) {
@@ -839,7 +846,8 @@ function compileLaravelFeatureContent(content, projectName) {
     projectName,
     projectSlug: slugifyProjectName(projectName),
     projectShortName: getProjectShortName(projectName),
-    projectDescription: `${projectName} application.`
+    projectDescription: `${projectName} application.`,
+    currencySymbol: "USD"
   });
 }
 
@@ -918,7 +926,7 @@ function parseCrudFields(fieldInput) {
       const type = rawType.toLowerCase();
 
       if (!name || !/^[a-z][a-z0-9_]*$/.test(name)) {
-        fail(`Invalid CRUD field "${rawName}". Use names like name, title, support_email, or is_active.`);
+        fail(`Invalid CRUD field "${rawName}". Use names like name, title, contact_email, or is_active.`);
       }
 
       if (!crudFieldTypes[type]) {
@@ -1082,7 +1090,7 @@ function renderCrudStatusPieces(definition) {
   }
 
   return {
-    route: `            \\Illuminate\\Support\\Facades\\Route::post('change-status', [\\App\\Http\\Controllers\\Admin\\${definition.controllerClass}::class, 'changeStatus']);\n`,
+    route: `            Route::post('change-status', [${definition.controllerClass}::class, 'changeStatus']);\n`,
     method: `    public function changeStatus(Request $request)\n    {\n        $response = ${definition.modelClass}::where('id', $request->id)->update(['is_active' => $request->status]);\n\n        if ($response) {\n            $message = $request->status == 1 ? 'Activated' : 'Inactivated';\n            return response()->json(['status' => 'success', 'message' => \"${definition.singularTitle} $message successfully.\"]);\n        }\n\n        return response()->json(['status' => 'error', 'message' => 'Invalid Data']);\n    }`,
     script: `        function changeStatus(id, status) {\n            if ($.trim(id)) {\n                let statusText = status == 1 ? "activate" : "deactivate";\n                Swal.fire({\n                    title: 'Update Status?',\n                    text: "Do you want to " + statusText + " this?",\n                    icon: 'info',\n                    showCancelButton: true,\n                    confirmButtonText: 'Yes, change it!'\n                }).then(function(result) {\n                    if (result.value) {\n                        $.ajax({\n                            headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },\n                            url: "{{ url('admin/__ROUTE_NAME__/change-status') }}",\n                            type: "POST",\n                            dataType: "JSON",\n                            data: { id: id, status: status },\n                            success: function(response) {\n                                if (response.status == 'success') {\n                                    Swal.fire("Updated", response.message, "success");\n                                    $("#myTable").DataTable().ajax.reload(null, false);\n                                } else {\n                                    Swal.fire("Error!", response.message, "error");\n                                }\n                            },\n                            error: function(xhr, ajaxOptions, thrownError) {\n                                Swal.fire("Error!", "Something went wrong", "error");\n                            }\n                        });\n                    }\n                });\n            }\n        }\n\n`
   };
@@ -1108,15 +1116,72 @@ async function collectLaravelUiThemeConfig(prompt, projectName) {
   console.log(color.dim("These values make each generated admin panel feel different while keeping the same reusable layout."));
 
   return {
-    DEVFORGE_UI_APP_NAME: `"${await askQuestion(prompt, "Enter admin panel app name", projectName)}"`,
-    DEVFORGE_UI_PRIMARY_COLOR: await askHexColor(prompt, "Enter primary color code", "#049C9C"),
-    DEVFORGE_UI_SECONDARY_COLOR: await askHexColor(prompt, "Enter secondary color code", "#037a7a"),
-    DEVFORGE_UI_PANEL_TITLE: `"${await askQuestion(prompt, "Enter admin panel title", "Admin Panel")}"`,
-    DEVFORGE_UI_PANEL_DESCRIPTION: `"${await askQuestion(prompt, "Enter admin panel description", "Manage users, settings, reports, and application operations from one place.")}"`
+    APP_UI_APP_NAME: `"${await askQuestion(prompt, "Enter admin panel app name", projectName)}"`,
+    APP_UI_PRIMARY_COLOR: `"${await askHexColor(prompt, "Enter primary color code", "#049C9C")}"`,
+    APP_UI_SECONDARY_COLOR: `"${await askHexColor(prompt, "Enter secondary color code", "#037a7a")}"`,
+    APP_UI_PANEL_TITLE: `"${await askQuestion(prompt, "Enter admin panel title", "Admin Panel")}"`,
+    APP_UI_PANEL_DESCRIPTION: `"${await askQuestion(prompt, "Enter admin panel description", "Manage users, settings, reports, and application operations from one place.")}"`
   };
 }
 
-async function collectLaravelStarterFeatureChoices(projectName) {
+async function collectLaravelFirebaseSetup(prompt, projectName, args = []) {
+  console.log("");
+  console.log(color.bold("Firebase Feature Settings"));
+  console.log(color.dim("Provide your Firebase project name, then drag and drop or paste the uploaded service-account JSON file path. DevForge accepts .json files only and copies it into storage."));
+
+  const firebaseProjectName = getOptionValue(args, "--firebase-project")
+    || await askQuestion(prompt, "Enter Firebase project name", slugifyProjectName(projectName));
+  const directCredentialsPath = getOptionValue(args, "--firebase-credentials");
+
+  if (directCredentialsPath) {
+    const resolvedPath = path.resolve(directCredentialsPath.replace(/^~/, process.env.HOME || ""));
+
+    if (path.extname(resolvedPath).toLowerCase() !== ".json") {
+      fail("Firebase credentials must be a .json file.");
+    }
+
+    if (!fs.existsSync(resolvedPath)) {
+      fail(`Firebase JSON file was not found at ${resolvedPath}.`);
+    }
+
+    return {
+      projectName: firebaseProjectName,
+      credentialsPath: resolvedPath
+    };
+  }
+
+  while (true) {
+    const credentialsPath = await askQuestion(prompt, "Drag/drop or paste Firebase service-account JSON file path");
+
+    if (!credentialsPath) {
+      return {
+        projectName: firebaseProjectName,
+        credentialsPath: ""
+      };
+    }
+
+    const resolvedPath = path.resolve(credentialsPath.replace(/^~/, process.env.HOME || ""));
+
+    if (path.extname(resolvedPath).toLowerCase() !== ".json") {
+      console.log("");
+      console.log(color.yellow("Invalid file type. Please provide a .json service-account file."));
+      continue;
+    }
+
+    if (!fs.existsSync(resolvedPath)) {
+      console.log("");
+      console.log(color.yellow(`Firebase JSON file was not found at ${resolvedPath}.`));
+      continue;
+    }
+
+    return {
+      projectName: firebaseProjectName,
+      credentialsPath: resolvedPath
+    };
+  }
+}
+
+async function collectLaravelStarterFeatureChoices(projectName, args = []) {
   if (!process.stdin.isTTY) {
     console.log("");
     console.log("Laravel starter feature selection");
@@ -1157,6 +1222,9 @@ async function collectLaravelStarterFeatureChoices(projectName) {
     const firebase = commonCore
       ? false
       : await askYesNo(prompt, "Add Firebase Feature? This prepares Firebase service/config placeholders for notification or auth integrations", "no");
+    const firebaseSetup = firebase || commonCore
+      ? await collectLaravelFirebaseSetup(prompt, projectName, args)
+      : null;
     const excelExport = await askYesNo(prompt, "Add Excel Export Feature? This creates SampleExport for maatwebsite/excel", "yes");
     const pdfExport = await askYesNo(prompt, "Add PDF Export Feature? This prepares a PDF service placeholder for DomPDF reports", "no");
     const pwa = await askYesNo(prompt, "Add PWA Feature? This creates manifest, app icon, and service worker cache files using the project name", "yes");
@@ -1172,6 +1240,7 @@ async function collectLaravelStarterFeatureChoices(projectName) {
       themeConfig,
       middleware,
       firebase,
+      firebaseSetup,
       excelExport,
       pdfExport,
       pwa
@@ -1261,8 +1330,16 @@ function createLaravelBaseStructure(projectDirectory) {
 }
 
 function appendUniqueFileContent(filePath, content, marker) {
-  const currentContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf8") : "<?php\n";
-  const normalizedContent = content.trim().replace(/^<\?php\s*/, "");
+  let currentContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf8") : "<?php\n";
+  let normalizedContent = content.trim().replace(/^<\?php\s*/, "");
+
+  if (filePath.endsWith(path.join("routes", "web.php")) && normalizedContent.includes("Route::")) {
+    const useImports = normalizedContent.match(/^use [^;]+;\s*/gm) || [];
+    normalizedContent = normalizedContent.replace(/^use [^;]+;\s*/gm, "").trimStart();
+    currentContent = useImports
+      .map((importLine) => importLine.trim().replace(/^use\s+|;$/g, ""))
+      .reduce((contentWithImports, importClass) => ensurePhpUseImport(contentWithImports, importClass), currentContent);
+  }
 
   if (currentContent.includes(marker)) {
     return false;
@@ -1273,7 +1350,7 @@ function appendUniqueFileContent(filePath, content, marker) {
   return true;
 }
 
-function copyLaravelFeatureFiles(projectDirectory, projectName, feature) {
+function copyLaravelFeatureFiles(projectDirectory, projectName, feature, options = {}) {
   const createdItems = [];
 
   (feature.directories || []).forEach((directory) => {
@@ -1309,7 +1386,8 @@ function copyLaravelFeatureFiles(projectDirectory, projectName, feature) {
       projectName,
       projectSlug: slugifyProjectName(projectName),
       projectShortName: getProjectShortName(projectName),
-      projectDescription: `${projectName} application.`
+      projectDescription: `${projectName} application.`,
+      currencySymbol: getCurrencySymbolForTimezone(options.timezone || "UTC")
     });
     createdItems.push(`${directory.target}/`);
   });
@@ -1356,6 +1434,30 @@ function applyLaravelFeatureEnv(projectDirectory, projectName, feature, options 
   return updatedItems;
 }
 
+function readLaravelConfiguredTimezone(projectDirectory) {
+  const envFilePath = path.join(projectDirectory, ".env");
+
+  if (fs.existsSync(envFilePath)) {
+    const envContent = fs.readFileSync(envFilePath, "utf8");
+    const envMatch = envContent.match(/^APP_TIMEZONE=(.+)$/m);
+
+    if (envMatch) {
+      return envMatch[1].trim().replace(/^"|"$/g, "");
+    }
+  }
+
+  const appConfigPath = path.join(projectDirectory, "config", "app.php");
+
+  if (!fs.existsSync(appConfigPath)) {
+    return "UTC";
+  }
+
+  const content = fs.readFileSync(appConfigPath, "utf8");
+  const match = content.match(/'timezone'\s*=>\s*'([^']+)'/);
+
+  return match ? match[1] : "UTC";
+}
+
 function updateLaravelUserModelForRbac(projectDirectory) {
   const userModelPath = path.join(projectDirectory, "app", "Models", "User.php");
 
@@ -1369,12 +1471,29 @@ function updateLaravelUserModelForRbac(projectDirectory) {
       );
     }
 
-    if (!nextContent.includes("'role_id'")) {
+    if (!nextContent.includes("use Illuminate\\Database\\Eloquent\\SoftDeletes;")) {
       nextContent = nextContent.replace(
-        /(protected \$fillable = \[\s*)/,
-        "$1\n        'role_id',"
+        /use Illuminate\\Notifications\\Notifiable;\n/,
+        "use Illuminate\\Notifications\\Notifiable;\nuse Illuminate\\Database\\Eloquent\\SoftDeletes;\n"
       );
     }
+
+    if (!nextContent.includes("use SoftDeletes;")) {
+      nextContent = nextContent.replace(
+        /use HasApiTokens, HasFactory, Notifiable;/,
+        "use HasApiTokens, HasFactory, Notifiable, SoftDeletes;"
+      );
+    }
+
+    nextContent = nextContent.replace(
+      /protected \$fillable = \[[\s\S]*?\];/,
+      `protected $fillable = [\n        'name',\n        'email',\n        'phone_number',\n        'password',\n        'role_id',\n        'is_active',\n        'utm_source',\n        'device_id',\n        'device_info',\n    ];`
+    );
+
+    nextContent = nextContent.replace(
+      /protected \$casts = \[[\s\S]*?\];/,
+      `protected $casts = [\n        'device_info' => 'array',\n        'email_verified_at' => 'datetime',\n        'is_active' => 'integer',\n        'password' => 'hashed',\n    ];`
+    );
 
     if (!nextContent.includes("public function role(): BelongsTo")) {
       nextContent = nextContent.replace(
@@ -1410,10 +1529,10 @@ function applyLaravelProjectStructureFeature(projectDirectory) {
     "app/Notifications/",
     "app/Http/Controllers/Admin/Auth/",
     "app/Http/Controllers/Api/V1/",
-    "public/assets/css/",
-    "public/assets/fonts/",
-    "public/assets/images/",
-    "public/assets/js/",
+    "public/assets/web/css/",
+    "public/assets/web/fonts/",
+    "public/assets/web/images/",
+    "public/assets/web/js/",
     "resources/views/admin/auth/",
     "resources/views/admin/layouts/",
     "resources/views/errors/",
@@ -1483,13 +1602,47 @@ function applyLaravelFirebaseFeature(projectDirectory) {
   ];
 }
 
+function applyLaravelFirebaseSetup(projectDirectory, firebaseSetup = null) {
+  if (!firebaseSetup || !firebaseSetup.projectName) {
+    return [];
+  }
+
+  const firebaseProjectName = slugifyProjectName(firebaseSetup.projectName);
+  const credentialsFileName = `${firebaseProjectName}-firebase-adminsdk.json`;
+  const credentialsTarget = path.join(projectDirectory, "storage", "app", "public", credentialsFileName);
+  const updatedItems = [];
+
+  ensureDirectory(path.dirname(credentialsTarget));
+
+  if (firebaseSetup.credentialsPath) {
+    fs.copyFileSync(firebaseSetup.credentialsPath, credentialsTarget);
+    fs.chmodSync(credentialsTarget, 0o644);
+    updatedItems.push(`storage/app/public/${credentialsFileName}`);
+  }
+
+  applyLaravelFeatureEnv(projectDirectory, path.basename(projectDirectory), {
+    env: {
+      FIREBASE_PROJECT_ID: firebaseProjectName,
+      FIREBASE_CREDENTIALS: `storage/app/public/${credentialsFileName}`,
+      FIREBASE_DATABASE_URL: ""
+    }
+  });
+
+  updatedItems.push(".env", ".env.example");
+  return updatedItems;
+}
+
 function applyLaravelGenericManifestFeature(projectDirectory, projectName, featureId, options = {}) {
   const feature = getLaravelFeatureDefinition(featureId);
+  const featureOptions = {
+    ...options,
+    timezone: options.timezone || readLaravelConfiguredTimezone(projectDirectory)
+  };
 
   return {
     createdItems: [
-      ...copyLaravelFeatureFiles(projectDirectory, projectName, feature),
-      ...applyLaravelFeatureEnv(projectDirectory, projectName, feature, options)
+      ...copyLaravelFeatureFiles(projectDirectory, projectName, feature, featureOptions),
+      ...applyLaravelFeatureEnv(projectDirectory, projectName, feature, featureOptions)
     ],
     composerUpdated: updateLaravelComposerAutoloadFiles(projectDirectory, feature.autoloadFiles || [])
   };
@@ -1528,7 +1681,7 @@ function applyLaravelFeatureById(projectDirectory, projectName, featureId, datab
       fail("Database feature requires validated database settings.");
     }
 
-    writeLaravelEnvironment(projectDirectory, projectName, databaseConfig);
+    writeLaravelEnvironment(projectDirectory, projectName, databaseConfig, options.timezone || readLaravelConfiguredTimezone(projectDirectory));
     createdItems = [".env", ".env.example"];
   } else if (featureId === "rbac") {
     createdItems = applyLaravelRbacFeature(projectDirectory);
@@ -1546,8 +1699,14 @@ function applyLaravelFeatureById(projectDirectory, projectName, featureId, datab
     createdItems = applyLaravelAdminUiThemeFeature(projectDirectory, projectName, options);
   } else if (featureId === "middleware") {
     createdItems = applyLaravelMiddlewareFeature(projectDirectory);
+    if (updateLaravelApiLogChannel(projectDirectory)) {
+      createdItems.push("config/logging.php api_logs channel");
+    }
   } else if (featureId === "firebase") {
-    createdItems = applyLaravelFirebaseFeature(projectDirectory);
+    createdItems = [
+      ...applyLaravelFirebaseFeature(projectDirectory),
+      ...applyLaravelFirebaseSetup(projectDirectory, options.firebaseSetup || null)
+    ];
   } else if (featureId === "excel-export") {
     createdItems = applyLaravelExcelExportFeature(projectDirectory, projectName);
   } else if (featureId === "pdf-export") {
@@ -1560,8 +1719,14 @@ function applyLaravelFeatureById(projectDirectory, projectName, featureId, datab
     composerUpdated = result.composerUpdated;
 
     if (featureId === "common-core") {
+      createdItems.push(...applyLaravelFirebaseSetup(projectDirectory, options.firebaseSetup || null));
+
       if (updateLaravelKernelMiddleware(projectDirectory)) {
         createdItems.push("app/Http/Kernel.php middleware aliases");
+      }
+
+      if (updateLaravelApiLogChannel(projectDirectory)) {
+        createdItems.push("config/logging.php api_logs channel");
       }
     }
   }
@@ -1595,18 +1760,46 @@ function getCrudMigrationFileName(definition) {
   return `${timestamp}_create_${definition.tableName}_table.php`;
 }
 
-function insertCrudRoute(projectDirectory, routeContent, routeName) {
+function ensurePhpUseImport(content, importClass) {
+  const importLine = `use ${importClass};`;
+
+  if (content.includes(importLine)) {
+    return content;
+  }
+
+  const useMatches = [...content.matchAll(/^use [^;]+;\n/gm)];
+  if (useMatches.length > 0) {
+    const routeImport = "use Illuminate\\Support\\Facades\\Route;\n";
+    const shouldInsertBeforeRoute = importClass.startsWith("App\\") && content.includes(routeImport);
+
+    if (shouldInsertBeforeRoute) {
+      const insertIndex = content.indexOf(routeImport);
+      return `${content.slice(0, insertIndex)}${importLine}\n${content.slice(insertIndex).replace(/^\n{2,}/, "\n")}`;
+    }
+
+    const lastMatch = useMatches[useMatches.length - 1];
+    const insertIndex = lastMatch.index + lastMatch[0].length;
+    return `${content.slice(0, insertIndex)}${importLine}\n${content.slice(insertIndex).replace(/^\n{2,}/, "\n")}`;
+  }
+
+  return content.replace(/^<\?php\s*/, `<?php\n\n${importLine}\n\n`);
+}
+
+function insertCrudRoute(projectDirectory, routeContent, routeName, controllerClass) {
   const routePath = path.join(projectDirectory, "routes", "web.php");
 
   if (!fs.existsSync(routePath)) {
     fail("routes/web.php was not found. Create or install the Laravel project before adding CRUD modules.");
   }
 
-  const currentContent = fs.readFileSync(routePath, "utf8");
+  let currentContent = fs.readFileSync(routePath, "utf8");
 
   if (currentContent.includes(`prefix('${routeName}')`) || currentContent.includes(`prefix("${routeName}")`)) {
     return false;
   }
+
+  currentContent = ensurePhpUseImport(currentContent, "Illuminate\\Support\\Facades\\Route");
+  currentContent = ensurePhpUseImport(currentContent, `App\\Http\\Controllers\\Admin\\${controllerClass}`);
 
   const protectedAdminGroupEndPatterns = ["\n    });\n\n});", "\n    });\n});"];
   const protectedAdminGroupIndex = protectedAdminGroupEndPatterns
@@ -1711,7 +1904,8 @@ function applyLaravelCrudModule(projectDirectory, definition, options = {}) {
   const routeAdded = insertCrudRoute(
     projectDirectory,
     renderCrudStub("routes/web.php.stub", definition, commonVariables),
-    definition.routeName
+    definition.routeName,
+    definition.controllerClass
   );
   const sidebarAdded = insertCrudSidebarLink(projectDirectory, definition);
   const createdItems = files.map((file) => file.target);
@@ -1748,7 +1942,9 @@ function applyLaravelStarterFeatures(projectDirectory, projectName, choices) {
 
   selectedFeatureIds.forEach((featureId) => {
     const result = applyLaravelFeatureById(projectDirectory, projectName, featureId, null, {
-      themeConfig: choices.themeConfig || {}
+      themeConfig: choices.themeConfig || {},
+      timezone: choices.timezone || "UTC",
+      firebaseSetup: choices.firebaseSetup || null
     });
     composerUpdated = composerUpdated || result.composerUpdated;
     createdItems.push(...result.createdItems);
@@ -1864,10 +2060,15 @@ function updateLaravelKernelMiddleware(projectDirectory) {
   return replaceFileContent(kernelPath, (content) => {
     let nextContent = content;
 
+    nextContent = nextContent.replace(/\n\s+\\App\\Http\\Middleware\\SecureHeaders::class,/g, "");
+    nextContent = nextContent.replace(
+      /(protected \$middleware\s*=\s*\[[\s\S]*?\\App\\Http\\Middleware\\TrustProxies::class,)/,
+      `$1\n        \\App\\Http\\Middleware\\SecureHeaders::class,`
+    );
+
     [
       "\\App\\Http\\Middleware\\NormalizeApiResponse::class",
       "\\App\\Http\\Middleware\\ApiLoggerMiddleware::class",
-      "\\App\\Http\\Middleware\\SecureHeaders::class",
       "\\App\\Http\\Middleware\\SanitizeInput::class"
     ].forEach((middleware) => {
       if (!nextContent.includes(middleware)) {
@@ -1884,14 +2085,46 @@ function updateLaravelKernelMiddleware(projectDirectory) {
       "'admin.maintenance' => \\App\\Http\\Middleware\\AdminMaintenance::class"
     ].forEach((middlewareAlias) => {
       if (!nextContent.includes(middlewareAlias)) {
-        nextContent = nextContent.replace(
-          /(protected \$routeMiddleware\s*=\s*\[[\s\S]*?'verified'\s*=>\s*\\Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified::class,)/,
-          `$1\n        ${middlewareAlias},`
-        );
+        const aliasPattern = /(protected \$middlewareAliases\s*=\s*\[[\s\S]*?'verified'\s*=>\s*\\Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified::class,)/;
+        const routeMiddlewarePattern = /(protected \$routeMiddleware\s*=\s*\[[\s\S]*?'verified'\s*=>\s*\\Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified::class,)/;
+
+        if (aliasPattern.test(nextContent)) {
+          nextContent = nextContent.replace(aliasPattern, `$1\n        ${middlewareAlias},`);
+        } else {
+          nextContent = nextContent.replace(routeMiddlewarePattern, `$1\n        ${middlewareAlias},`);
+        }
       }
     });
 
     return nextContent;
+  });
+}
+
+function updateLaravelApiLogChannel(projectDirectory) {
+  const loggingPath = path.join(projectDirectory, "config", "logging.php");
+
+  return replaceFileContent(loggingPath, (content) => {
+    const apiLogsBlock = `        'api_logs' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/api.log'),
+            'level' => 'info',
+            'days' => 7,
+        ],`;
+
+    if (content.includes("'api_logs' => [")) {
+      return content.replace(
+        /        'single' => \[[\s\S]*?        \],\s+        'api_logs' => \[[\s\S]*?        \],\s+        'daily' => \[/,
+        (match) => {
+          const singleBlock = match.match(/        'single' => \[[\s\S]*?        \],/)[0];
+          return `${singleBlock}\n\n${apiLogsBlock}\n\n        'daily' => [`;
+        }
+      );
+    }
+
+    return content.replace(
+      /(\n        'daily' => \[)/,
+      `\n${apiLogsBlock}\n$1`
+    );
   });
 }
 
@@ -1945,7 +2178,7 @@ function setEnvValue(lines, key, value) {
   lines[index] = nextLine;
 }
 
-function writeLaravelEnvironment(projectDirectory, projectName, databaseConfig) {
+function writeLaravelEnvironment(projectDirectory, projectName, databaseConfig, timezone = "UTC") {
   const envExamplePath = path.join(projectDirectory, ".env.example");
   const envPath = path.join(projectDirectory, ".env");
   const sourcePath = fs.existsSync(envExamplePath) ? envExamplePath : envPath;
@@ -1970,11 +2203,22 @@ function writeLaravelEnvironment(projectDirectory, projectName, databaseConfig) 
     "BROADCAST_DRIVER=log",
     "CACHE_DRIVER=file",
     "FILESYSTEM_DISK=local",
-    "QUEUE_CONNECTION=sync",
+    "QUEUE_CONNECTION=database",
     "SESSION_DRIVER=file",
     "SESSION_LIFETIME=120",
     "",
-    "JWT_SECRET="
+    "MAIL_MAILER=smtp",
+    "MAIL_HOST=mailpit",
+    "MAIL_PORT=1025",
+    "MAIL_USERNAME=null",
+    "MAIL_PASSWORD=null",
+    "MAIL_ENCRYPTION=null",
+    "MAIL_FROM_ADDRESS=null",
+    "MAIL_FROM_NAME=\"${APP_NAME}\"",
+    "",
+    "JWT_SECRET=",
+    "JWT_TTL=30",
+    "JWT_REFRESH_TTL=43200"
   ].join("\n");
   const sourceContent = fs.existsSync(sourcePath)
     ? fs.readFileSync(sourcePath, "utf8")
@@ -1985,12 +2229,17 @@ function writeLaravelEnvironment(projectDirectory, projectName, databaseConfig) 
   setEnvValue(lines, "APP_ENV", "local");
   setEnvValue(lines, "APP_DEBUG", "true");
   setEnvValue(lines, "APP_URL", "http://localhost");
+  setEnvValue(lines, "APP_TIMEZONE", timezone);
 
   Object.entries(databaseConfig).forEach(([key, value]) => {
     setEnvValue(lines, key, value);
   });
 
   setEnvValue(lines, "JWT_SECRET", "");
+  setEnvValue(lines, "JWT_TTL", "30");
+  setEnvValue(lines, "JWT_REFRESH_TTL", "43200");
+  setEnvValue(lines, "MAIL_FROM_ADDRESS", "null");
+  setEnvValue(lines, "QUEUE_CONNECTION", "database");
 
   const content = `${lines.join("\n").replace(/\n+$/, "")}\n`;
 
@@ -2011,7 +2260,7 @@ function runLaravelSetupCommands(projectDirectory, setupCommands) {
 
 async function createLaravelProject(projectName, config, manifest, projectDirectory, outputRoot, skipInstall, args) {
   const generator = manifest.generator;
-  const totalSteps = skipInstall ? 10 : 20;
+  const totalSteps = skipInstall ? 10 : 21;
 
   console.log("");
   writeProgress(1, totalSteps, "Checking PHP and Composer requirements", `Laravel ${generator.laravelVersion} requires PHP ${generator.minimumPhpVersion} or higher.`);
@@ -2062,7 +2311,7 @@ async function createLaravelProject(projectName, config, manifest, projectDirect
   }
 
   writeProgress(skipInstall ? 5 : 7, totalSteps, "Applying database configuration", "Updating .env and .env.example.");
-  writeLaravelEnvironment(projectDirectory, projectName, databaseConfig);
+  writeLaravelEnvironment(projectDirectory, projectName, databaseConfig, timezone);
 
   if (!skipInstall) {
     writeProgress(8, totalSteps, "Generating Laravel application key", "Running php artisan key:generate.");
@@ -2076,10 +2325,13 @@ async function createLaravelProject(projectName, config, manifest, projectDirect
   const timezoneUpdated = updateLaravelTimezone(projectDirectory, timezone);
   console.log(`  ${timezoneUpdated ? "config/app.php updated." : "config/app.php is not available in skip-install mode."}`);
 
-  writeProgress(skipInstall ? 7 : 10, totalSteps, "Applying Laravel hosting files", "Adding root .htaccess, root index.php, and DevForge notes.");
+  writeProgress(skipInstall ? 7 : 10, totalSteps, "Applying Laravel hosting files", "Adding root .htaccess, root index.php, server.php, public .htaccess, and starter notes.");
   copyTemplateDirectory(path.join(projectRoot, config.languagesDirectory, "laravel", manifest.entry.templates), projectDirectory, {
     projectName,
-    projectSlug: slugifyProjectName(projectName)
+    projectSlug: slugifyProjectName(projectName),
+    projectShortName: getProjectShortName(projectName),
+    projectDescription: `${projectName} application.`,
+    currencySymbol: getCurrencySymbolForTimezone(timezone)
   }, {
     ignorePaths: ["app/Exceptions", "public/pwa"]
   });
@@ -2089,7 +2341,8 @@ async function createLaravelProject(projectName, config, manifest, projectDirect
   console.log(`  ${handlerUpdated ? "Updated app/Exceptions/Handler.php." : "Handler template was not found."}`);
 
   writeProgress(skipInstall ? 9 : 12, totalSteps, "Configuring Laravel starter folders", "Excel exports are always prepared; optional features are selected interactively.");
-  const featureChoices = await collectLaravelStarterFeatureChoices(projectName);
+  const featureChoices = await collectLaravelStarterFeatureChoices(projectName, args);
+  featureChoices.timezone = timezone;
   const featureResult = applyLaravelStarterFeatures(projectDirectory, projectName, featureChoices);
   console.log(`  Created: ${featureResult.createdItems.join(", ")}`);
 
@@ -2130,11 +2383,15 @@ async function createLaravelProject(projectName, config, manifest, projectDirect
   const authUpdated = updateLaravelJwtAuthGuard(projectDirectory);
   console.log(`  ${authUpdated ? "config/auth.php updated." : "config/auth.php was not found."}`);
 
-  writeProgress(19, totalSteps, "Creating storage link and clearing caches", "Linking public storage and clearing cached framework files.");
+  writeProgress(19, totalSteps, "Configuring API log channel", "Adding a daily api_logs channel for API request logs.");
+  const apiLogChannelUpdated = updateLaravelApiLogChannel(projectDirectory);
+  console.log(`  ${apiLogChannelUpdated ? "config/logging.php updated." : "config/logging.php was not found."}`);
+
+  writeProgress(20, totalSteps, "Creating storage link and clearing caches", "Linking public storage and clearing cached framework files.");
   runLaravelSetupCommands(projectDirectory, generator.setupCommands.slice(5, 6));
   runLaravelSetupCommands(projectDirectory, generator.setupCommands.slice(6));
 
-  writeProgress(20, totalSteps, "Verifying Laravel installation", "Checking installed package metadata.");
+  writeProgress(21, totalSteps, "Verifying Laravel installation", "Checking installed package metadata.");
   runCommand("composer", ["show", "laravel/framework"], {
     cwd: projectDirectory,
     failureMessage: "Laravel framework verification failed"
@@ -2324,6 +2581,37 @@ async function addLaravelFeatureCommand(args) {
           featureOptions = {
             themeConfig: await collectLaravelUiThemeConfig(prompt, projectName)
           };
+        } finally {
+          prompt.close();
+        }
+      }
+    }
+
+    if (["firebase", "common-core"].includes(featureId)) {
+      if (getOptionValue(args, "--firebase-project") || getOptionValue(args, "--firebase-credentials")) {
+        featureOptions.firebaseSetup = {
+          projectName: getOptionValue(args, "--firebase-project") || slugifyProjectName(projectName),
+          credentialsPath: getOptionValue(args, "--firebase-credentials")
+            ? path.resolve(getOptionValue(args, "--firebase-credentials").replace(/^~/, process.env.HOME || ""))
+            : ""
+        };
+
+        if (featureOptions.firebaseSetup.credentialsPath) {
+          if (path.extname(featureOptions.firebaseSetup.credentialsPath).toLowerCase() !== ".json") {
+            fail("Firebase credentials must be a .json file.");
+          }
+
+          if (!fs.existsSync(featureOptions.firebaseSetup.credentialsPath)) {
+            fail(`Firebase JSON file was not found at ${featureOptions.firebaseSetup.credentialsPath}.`);
+          }
+        }
+      } else if (!process.stdin.isTTY) {
+        featureOptions.firebaseSetup = null;
+      } else {
+        const prompt = createPrompt();
+
+        try {
+          featureOptions.firebaseSetup = await collectLaravelFirebaseSetup(prompt, projectName, args);
         } finally {
           prompt.close();
         }

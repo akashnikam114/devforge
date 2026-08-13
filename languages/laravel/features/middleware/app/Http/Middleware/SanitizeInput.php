@@ -18,18 +18,17 @@ class SanitizeInput
     protected function sanitize(array $input)
     {
         $sanitized = [];
-    
+
         foreach ($input as $key => $value) {
             if (is_string($value)) {
-                $sanitized[$key] = filter_var($value, FILTER_SANITIZE_STRING);
-                $sanitized[$key] = html_entity_decode($sanitized[$key], ENT_QUOTES | ENT_HTML5);
-            } elseif (is_numeric($value)) {
-                $sanitized[$key] = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+                $sanitized[$key] = trim(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $value));
+            } elseif (is_array($value)) {
+                $sanitized[$key] = $this->sanitize($value);
             } else {
                 $sanitized[$key] = $value;
             }
         }
-    
+
         return $sanitized;
-    }    
+    }
 }

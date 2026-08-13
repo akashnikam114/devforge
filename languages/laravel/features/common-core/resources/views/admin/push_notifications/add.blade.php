@@ -70,6 +70,23 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="is_active">Status</label>
+                                    <div class="form-control-wrap">
+                                        <select class="form-control form-control-lg @error('is_active') is-invalid @enderror" name="is_active" id="is_active">
+                                            <option value="1" {{ old('is_active', 1) == 1 ? 'selected' : '' }}>Active</option>
+                                            <option value="0" {{ old('is_active') == 0 ? 'selected' : '' }}>Inactive</option>
+                                        </select>
+                                        @error('is_active')
+                                            <span class="invalid-feedback">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="col-12">
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-lg btn-primary">Save</button>

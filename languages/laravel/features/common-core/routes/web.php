@@ -1,57 +1,67 @@
 <?php
 
-\Illuminate\Support\Facades\Route::get('{path}', function () {
+use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\BusinessSettingController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GeneralSettingController;
+use App\Http\Controllers\Admin\PushNotificationController;
+use App\Http\Controllers\Admin\RestrictionSettingController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('{path}', function () {
     return redirect()->route('admin.login');
 })->where('path', 'admin|login');
 
-\Illuminate\Support\Facades\Route::view('privacy-policy', 'pages.privacy-policy')->name('privacy-policy');
-\Illuminate\Support\Facades\Route::view('terms-and-conditions', 'pages.terms-and-conditions')->name('terms-and-conditions');
+Route::view('privacy-policy', 'pages.privacy-policy')->name('privacy-policy');
+Route::view('terms-and-conditions', 'pages.terms-and-conditions')->name('terms-and-conditions');
 
-\Illuminate\Support\Facades\Route::prefix('admin')->name('admin.')->group(function () {
-    \Illuminate\Support\Facades\Route::middleware('guest')->group(function () {
-        \Illuminate\Support\Facades\Route::get('login', [\App\Http\Controllers\Admin\Auth\LoginController::class, 'showLoginForm'])->name('login');
-        \Illuminate\Support\Facades\Route::post('login', [\App\Http\Controllers\Admin\Auth\LoginController::class, 'login']);
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+        Route::post('login', [LoginController::class, 'login']);
     });
 
-    \Illuminate\Support\Facades\Route::middleware(['auth', 'admin.maintenance'])->group(function () {
-        \Illuminate\Support\Facades\Route::get('dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
-        \Illuminate\Support\Facades\Route::post('change-password', [\App\Http\Controllers\Admin\Auth\LoginController::class, 'changePassword'])->name('password.change');
-        \Illuminate\Support\Facades\Route::post('logout', [\App\Http\Controllers\Admin\Auth\LoginController::class, 'logout'])->name('logout');
+    Route::middleware(['auth', 'admin.maintenance'])->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::post('change-password', [LoginController::class, 'changePassword'])->name('password.change');
+        Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-        \Illuminate\Support\Facades\Route::prefix('banners')->group(function () {
-            \Illuminate\Support\Facades\Route::get('all', [\App\Http\Controllers\Admin\BannerController::class, 'index'])->name('banners');
-            \Illuminate\Support\Facades\Route::get('add', [\App\Http\Controllers\Admin\BannerController::class, 'create']);
-            \Illuminate\Support\Facades\Route::post('add', [\App\Http\Controllers\Admin\BannerController::class, 'store']);
-            \Illuminate\Support\Facades\Route::get('edit/{id}', [\App\Http\Controllers\Admin\BannerController::class, 'edit']);
-            \Illuminate\Support\Facades\Route::post('edit/{id}', [\App\Http\Controllers\Admin\BannerController::class, 'update']);
-            \Illuminate\Support\Facades\Route::get('delete/{id}', [\App\Http\Controllers\Admin\BannerController::class, 'destroy']);
-            \Illuminate\Support\Facades\Route::post('change-status', [\App\Http\Controllers\Admin\BannerController::class, 'changeStatus']);
+        Route::prefix('banners')->group(function () {
+            Route::get('all', [BannerController::class, 'index'])->name('banners');
+            Route::get('add', [BannerController::class, 'create']);
+            Route::post('add', [BannerController::class, 'store']);
+            Route::get('edit/{id}', [BannerController::class, 'edit']);
+            Route::post('edit/{id}', [BannerController::class, 'update']);
+            Route::delete('delete/{id}', [BannerController::class, 'destroy']);
+            Route::post('change-status', [BannerController::class, 'changeStatus']);
         });
 
-        \Illuminate\Support\Facades\Route::prefix('push_notifications')->group(function () {
-            \Illuminate\Support\Facades\Route::get('all', [\App\Http\Controllers\Admin\PushNotificationController::class, 'index'])->name('notification');
-            \Illuminate\Support\Facades\Route::get('add', [\App\Http\Controllers\Admin\PushNotificationController::class, 'create']);
-            \Illuminate\Support\Facades\Route::post('add', [\App\Http\Controllers\Admin\PushNotificationController::class, 'store']);
-            \Illuminate\Support\Facades\Route::get('edit/{id}', [\App\Http\Controllers\Admin\PushNotificationController::class, 'edit']);
-            \Illuminate\Support\Facades\Route::post('edit/{id}', [\App\Http\Controllers\Admin\PushNotificationController::class, 'update']);
-            \Illuminate\Support\Facades\Route::get('delete/{id}', [\App\Http\Controllers\Admin\PushNotificationController::class, 'destroy']);
-            \Illuminate\Support\Facades\Route::post('send/{id}', [\App\Http\Controllers\Admin\PushNotificationController::class, 'sendPushNotification']);
+        Route::prefix('push_notifications')->group(function () {
+            Route::get('all', [PushNotificationController::class, 'index'])->name('notification');
+            Route::get('add', [PushNotificationController::class, 'create']);
+            Route::post('add', [PushNotificationController::class, 'store']);
+            Route::get('edit/{id}', [PushNotificationController::class, 'edit']);
+            Route::post('edit/{id}', [PushNotificationController::class, 'update']);
+            Route::delete('delete/{id}', [PushNotificationController::class, 'destroy']);
+            Route::post('send/{id}', [PushNotificationController::class, 'sendPushNotification']);
+            Route::post('change-status', [PushNotificationController::class, 'changeStatus']);
         });
 
-        \Illuminate\Support\Facades\Route::prefix('restriction_settings')->group(function () {
-            \Illuminate\Support\Facades\Route::get('all', [\App\Http\Controllers\Admin\RestrictionSettingController::class, 'index'])->name('restriction');
-            \Illuminate\Support\Facades\Route::get('edit/{id}', [\App\Http\Controllers\Admin\RestrictionSettingController::class, 'edit']);
-            \Illuminate\Support\Facades\Route::post('edit/{id}', [\App\Http\Controllers\Admin\RestrictionSettingController::class, 'update']);
+        Route::prefix('restriction_settings')->group(function () {
+            Route::get('all', [RestrictionSettingController::class, 'index'])->name('restriction_settings');
+            Route::get('edit/{id}', [RestrictionSettingController::class, 'edit']);
+            Route::post('edit/{id}', [RestrictionSettingController::class, 'update']);
         });
 
-        \Illuminate\Support\Facades\Route::prefix('general_settings')->group(function () {
-            \Illuminate\Support\Facades\Route::get('edit/{id}', [\App\Http\Controllers\Admin\GeneralSettingController::class, 'edit']);
-            \Illuminate\Support\Facades\Route::post('edit/{id}', [\App\Http\Controllers\Admin\GeneralSettingController::class, 'update']);
+        Route::prefix('general_settings')->group(function () {
+            Route::get('edit/{id}', [GeneralSettingController::class, 'edit']);
+            Route::post('edit/{id}', [GeneralSettingController::class, 'update']);
         });
 
-        \Illuminate\Support\Facades\Route::prefix('business_settings')->group(function () {
-            \Illuminate\Support\Facades\Route::get('edit', [\App\Http\Controllers\Admin\BusinessSettingController::class, 'edit']);
-            \Illuminate\Support\Facades\Route::post('update', [\App\Http\Controllers\Admin\BusinessSettingController::class, 'update']);
+        Route::prefix('business_settings')->group(function () {
+            Route::get('edit', [BusinessSettingController::class, 'edit']);
+            Route::post('update', [BusinessSettingController::class, 'update']);
         });
     });
 });

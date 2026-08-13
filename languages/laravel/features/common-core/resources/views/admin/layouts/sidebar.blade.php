@@ -2,8 +2,8 @@
     <div class="nk-sidebar-element nk-sidebar-head">
         <div class="nk-sidebar-brand">
             <a href="{{ route('admin.dashboard') }}" class="logo-link nk-sidebar-logo">
-                <img class="logo-light logo-img" src="{{ asset('assets/admin/img/app_logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} logo">
-                <img class="logo-dark logo-img" src="{{ asset('assets/admin/img/app_logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} logo">
+                <img class="logo-light logo-img" src="{{ asset('assets/admin/images/app-logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} logo">
+                <img class="logo-dark logo-img" src="{{ asset('assets/admin/images/app-logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} logo">
             </a>
         </div>
         <div class="nk-menu-trigger me-n2">
@@ -53,7 +53,7 @@
                             </a>
                             <ul class="nk-menu-sub">
                                 <li class="nk-menu-item">
-                                    <a href="{{ route('admin.restriction') }}" class="nk-menu-link">
+                                    <a href="{{ route('admin.restriction_settings') }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-security"></em></span>
                                         <span class="nk-menu-text">Restriction Setting</span>
                                     </a>

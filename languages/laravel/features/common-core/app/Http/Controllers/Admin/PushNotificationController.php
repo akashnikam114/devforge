@@ -27,6 +27,13 @@ class PushNotificationController extends Controller
             $query = $this->service->fetchRecord($data);
 
             return DataTables::of($query)
+                ->addColumn('is_active', function ($rec) {
+                    if ($rec->is_active == 1) {
+                        return '<div><span class="tb-status text-success" style="cursor:pointer" onclick="changeStatus(' . $rec->id . ',0)">Active</span></div>';
+                    }
+
+                    return '<div><span class="tb-status text-danger" style="cursor:pointer" onclick="changeStatus(' . $rec->id . ',1)">Inactive</span></div>';
+                })
                 ->addColumn('action', function ($rec) {
                     return '<ul class="nk-tb-actions gx-1 my-n1">
                         <li class="me-n1">
@@ -43,7 +50,7 @@ class PushNotificationController extends Controller
                         </li>
                     </ul>';
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'is_active'])
                 ->make(true);
         }
         return view('admin.push_notifications.all');
@@ -60,6 +67,7 @@ class PushNotificationController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'required|image|max:2048',
+            'is_active' => 'nullable|integer|in:0,1',
         ]);
 
         $imagePath = NULL;
@@ -69,7 +77,7 @@ class PushNotificationController extends Controller
             $imagePath = $image->storeAs('Notifications', $filename, 'public');
         }
 
-        $data = $request->only(['title', 'description']);
+        $data = $request->only(['title', 'description', 'is_active']);
         $data['image'] = $imagePath;
 
         $response = $this->service->store($data);
@@ -95,6 +103,7 @@ class PushNotificationController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'nullable|image|max:2048',
+            'is_active' => 'nullable|integer|in:0,1',
         ]);
 
         $notification = $this->service->fetch($id);
@@ -110,7 +119,7 @@ class PushNotificationController extends Controller
             $imagePath = $image->storeAs('Notifications', $filename, 'public');
         }
 
-        $data = $request->only(['title', 'description']);
+        $data = $request->only(['title', 'description', 'is_active']);
         $data['image'] = $imagePath;
 
         $response = $this->service->update($id, $data);
@@ -162,5 +171,17 @@ class PushNotificationController extends Controller
         } catch (Exception $e) {
             return response()->json(['status' => 'error', 'message' => 'Failed to send notification.']);
         }
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $response = PushNotification::where('id', $request->id)->update(['is_active' => $request->status]);
+
+        if ($response) {
+            $msg = $request->status == 1 ? 'Activated' : 'Inactivated';
+            return response()->json(['status' => 'success', 'message' => "Notification $msg successfully."]);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'Invalid Data']);
     }
 }

@@ -43,17 +43,26 @@ RBAC is always included. It creates:
 - `database/migrations/2024_01_01_000001_create_roles_table.php`
 - `database/migrations/2024_01_01_000002_add_role_id_to_users_table.php`
 - `app/Models/Role.php`
-- `role_id` support on `app/Models/User.php` when the Laravel model exists
+- `role_id` foreign key support on `app/Models/User.php` when the Laravel model exists
 
 Project Structure feature creates:
 
 - `app/Helpers/helpers.php`
 - `app/Services/.gitkeep`
 - `app/Traits/.gitkeep`
-- `public/assets/css/.gitkeep`
-- `public/assets/images/.gitkeep`
-- `public/assets/js/.gitkeep`
-- `public/assets/fonts/.gitkeep`
+- `public/assets/web/css/.gitkeep`
+- `public/assets/web/images/.gitkeep`
+- `public/assets/web/js/.gitkeep`
+- `public/assets/web/fonts/.gitkeep`
+- `storage/app/public/Others/`
+- `storage/app/public/Restriction/Maintenance_Mode.png`
+
+Queue setup is database-backed by default:
+
+- `.env` and `.env.example` use `QUEUE_CONNECTION=database`
+- `database/migrations/2024_01_01_000004_create_jobs_table.php`
+
+API request logging adds the `api_logs` daily log channel in `config/logging.php`, writing to `storage/logs/api.log` with seven-day retention.
 
 Feature command:
 
@@ -84,11 +93,22 @@ Current feature ids:
 
 - admin auth and dashboard
 - DashLite-compatible admin assets under `public/assets/admin`
+- generic admin images under `public/assets/admin/images`: sidebar-ready `app-logo.png`, `default-image.png`, and `favicons/favicon.ico`
+- PWA icon under `public/pwa/app-icon.png`
 - BusinessSetting, GeneralSetting, restriction settings, banners, and push notification modules
 - helpers: `BusinessSettingHelper`, `GeneralHelper`, `EncryptionHelper`
 - Firebase service module
 - admin/common models, services, controllers, migrations, views, routes, and middleware
-- `config/devforge-ui.php` for dynamic app name, primary color, secondary color, panel title, and panel description
+- `config/app-ui.php` for dynamic app name, primary color, secondary color, panel title, and panel description
+- `APP_UI_*` environment keys for generated application UI settings
+- `JWT_TTL=30` and `JWT_REFRESH_TTL=43200`
+- root `.htaccess`, root `index.php`, root `server.php`, and `public/.htaccess`
+
+Admin UI setup applies the selected theme color to buttons, header/profile bar states, dropdown actions, form focus states, sidebar menu states, pagination, badges, dashboard card accents, and Select2 focus/highlight states. General Settings uses Select2 for language, date format, and time format. Business Settings uses Select2 for currency and OTP provider, while sensitive values such as `encryption_key` remain stored but are not shown in the admin panel.
+
+`NormalizeApiResponse` converts incoming request keys from `camelCase` to `snake_case` before controller processing and converts JSON response keys from `snake_case` back to `camelCase`.
+
+Middleware setup registers secure headers globally, keeps API request normalization/logging/sanitization in the API middleware group, and registers `api.auth`, `app.maintenance`, and `admin.maintenance` aliases. `AppServiceProvider` shares the common `appSetting` helper with all Blade views.
 
 When `helpers.php` is selected in a full Laravel install, DevForge registers it in `composer.json > autoload.files` and refreshes Composer autoload files.
 
@@ -114,6 +134,8 @@ Base folder structure includes:
 - `resources/views/errors/`
 - `resources/views/pages/`
 - `routes/api/v1/api.php`
+
+Route files should declare all package imports and controller imports at the top with `use` statements. Route definitions should use imported class names such as `LoginController::class` instead of inline fully qualified controller names.
 
 Future Laravel options can be added under `recipes/`, for example:
 

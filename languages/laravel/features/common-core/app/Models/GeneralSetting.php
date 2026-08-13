@@ -11,8 +11,6 @@ class GeneralSetting extends Model
 
     protected $fillable = [
         'site_title',
-        'support_email',
-        'support_phone',
         'default_language',
         'date_format',
         'time_format',

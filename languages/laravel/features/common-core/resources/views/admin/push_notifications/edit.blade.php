@@ -40,7 +40,7 @@
                                     <div class="form-control-wrap mt-3">
                                         <label class="form-label d-block">Preview Image:</label>
                                         <img id="image-preview"
-                                            src="{{ ($data->image) ? asset('storage/' . $data->image) : asset('assets/admin/img/default-image.jpeg') }}"
+                                            src="{{ ($data->image) ? asset('storage/' . $data->image) : asset('assets/admin/images/default-image.png') }}"
                                             alt="Image Preview" style="max-width: 100%; max-height: 130px; border-radius: 4px;">
                                     </div>
                                 </div>
@@ -68,6 +68,23 @@
                                         <textarea class="form-control form-control-lg @error('description') is-invalid @enderror"
                                             name="description" id="description" rows="3" placeholder="Enter Description">{{ old('description', $data->description) }}</textarea>
                                         @error('description')
+                                            <span class="invalid-feedback">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="is_active">Status</label>
+                                    <div class="form-control-wrap">
+                                        <select class="form-control form-control-lg @error('is_active') is-invalid @enderror" name="is_active" id="is_active">
+                                            <option value="1" {{ old('is_active', $data->is_active) == 1 ? 'selected' : '' }}>Active</option>
+                                            <option value="0" {{ old('is_active', $data->is_active) == 0 ? 'selected' : '' }}>Inactive</option>
+                                        </select>
+                                        @error('is_active')
                                             <span class="invalid-feedback">
                                                 <strong>{{ $message }}</strong>
                                             </span>

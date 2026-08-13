@@ -26,10 +26,10 @@
     "app/Http/Controllers/Api/V1",
     "app/Http/Middleware",
     "app/Http/Resources",
-    "public/assets/css",
-    "public/assets/fonts",
-    "public/assets/images",
-    "public/assets/js",
+    "public/assets/web/css",
+    "public/assets/web/fonts",
+    "public/assets/web/images",
+    "public/assets/web/js",
     "resources/views/admin/auth",
     "resources/views/admin/layouts",
     "resources/views/errors",
@@ -61,6 +61,14 @@
         {
           "source": "rbac/database/migrations/2024_01_01_000002_add_role_id_to_users_table.php",
           "target": "database/migrations/2024_01_01_000002_add_role_id_to_users_table.php"
+        },
+        {
+          "source": "rbac/app/Models/UserOtp.php",
+          "target": "app/Models/UserOtp.php"
+        },
+        {
+          "source": "rbac/database/migrations/2024_01_01_000003_create_user_otps_table.php",
+          "target": "database/migrations/2024_01_01_000003_create_user_otps_table.php"
         }
       ]
     },
@@ -172,16 +180,16 @@
       "group": "Admin",
       "description": "Adds dynamic theme configuration for app name, primary color, secondary color, and panel branding.",
       "env": {
-        "DEVFORGE_UI_APP_NAME": "\"__PROJECT_NAME__\"",
-        "DEVFORGE_UI_PRIMARY_COLOR": "#049C9C",
-        "DEVFORGE_UI_SECONDARY_COLOR": "#037a7a",
-        "DEVFORGE_UI_PANEL_TITLE": "\"Admin Panel\"",
-        "DEVFORGE_UI_PANEL_DESCRIPTION": "\"Manage users, settings, reports, and application operations from one place.\""
+        "APP_UI_APP_NAME": "\"__PROJECT_NAME__\"",
+        "APP_UI_PRIMARY_COLOR": "\"#049C9C\"",
+        "APP_UI_SECONDARY_COLOR": "\"#037a7a\"",
+        "APP_UI_PANEL_TITLE": "\"Admin Panel\"",
+        "APP_UI_PANEL_DESCRIPTION": "\"Manage users, settings, reports, and application operations from one place.\""
       },
       "files": [
         {
-          "source": "admin-ui-theme/config/devforge-ui.php",
-          "target": "config/devforge-ui.php"
+          "source": "admin-ui-theme/config/app-ui.php",
+          "target": "config/app-ui.php"
         }
       ]
     },
@@ -207,12 +215,18 @@
         "app/Helpers/EncryptionHelper.php",
         "app/Helpers/GeneralHelper.php"
       ],
+      "directories": [
+        "public/assets/web/css",
+        "public/assets/web/fonts",
+        "public/assets/web/images",
+        "public/assets/web/js"
+      ],
       "env": {
-        "DEVFORGE_UI_APP_NAME": "\"__PROJECT_NAME__\"",
-        "DEVFORGE_UI_PRIMARY_COLOR": "#049C9C",
-        "DEVFORGE_UI_SECONDARY_COLOR": "#037a7a",
-        "DEVFORGE_UI_PANEL_TITLE": "\"Admin Panel\"",
-        "DEVFORGE_UI_PANEL_DESCRIPTION": "\"Manage users, settings, reports, and application operations from one place.\""
+        "APP_UI_APP_NAME": "\"__PROJECT_NAME__\"",
+        "APP_UI_PRIMARY_COLOR": "\"#049C9C\"",
+        "APP_UI_SECONDARY_COLOR": "\"#037a7a\"",
+        "APP_UI_PANEL_TITLE": "\"Admin Panel\"",
+        "APP_UI_PANEL_DESCRIPTION": "\"Manage users, settings, reports, and application operations from one place.\""
       },
       "append": [
         {
@@ -237,6 +251,10 @@
         {
           "source": "common-core/config",
           "target": "config"
+        },
+        {
+          "source": "common-core/storage",
+          "target": "storage"
         },
         {
           "source": "admin-assets/public/assets/admin",

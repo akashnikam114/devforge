@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
-class CreateRestrictionsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class CreateRestrictionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('restrictions', function (Blueprint $table) {
+        Schema::create('restriction_settings', function (Blueprint $table) {
             $table->id();
             $table->string('restriction_name')->unique();
             $table->boolean('is_restriction_enabled')->default(false);
@@ -27,14 +27,14 @@ class CreateRestrictionsTable extends Migration
             $table->timestamps();
         });
 
-        DB::table('restrictions')->insert([
+        DB::table('restriction_settings')->insert([
             'restriction_name' => 'Maintenance Mode',
             'is_restriction_enabled' => false,
-            'image' => 'Restriction/Maintenance_Mode_2078373633_6367.png',
+            'image' => 'Restriction/Maintenance_Mode.png',
             'title' => 'App Under Maintenance',
             'sub_title' => 'Our app is currently undergoing scheduled maintenance to improve our services. We should be back shortly. For urgent matters, please Contact Us.',
             'url_label' => 'Contact Us',
-            'redirection_url' => 'https://__PROJECT_SLUG__.com',
+            'redirection_url' => 'tel:+10000000000',
             'is_button_enabled' => true,
             'created_at' => now(),
             'updated_at' => now(),
@@ -48,6 +48,6 @@ class CreateRestrictionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('restrictions');
+        Schema::dropIfExists('restriction_settings');
     }
-}
+};

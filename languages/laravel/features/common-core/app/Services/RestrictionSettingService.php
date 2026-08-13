@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Restriction;
+use App\Models\RestrictionSetting;
 
 class RestrictionSettingService
 {
@@ -10,7 +10,7 @@ class RestrictionSettingService
 
     public function __construct()
     {
-        $this->model = new Restriction();
+        $this->model = new RestrictionSetting();
     }
 
     public function fetch(int $id = 0)

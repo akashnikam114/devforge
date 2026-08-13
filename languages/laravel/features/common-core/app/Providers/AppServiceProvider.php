@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
 use App\Helpers\BusinessSettingHelper;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,8 +29,6 @@ class AppServiceProvider extends ServiceProvider
         require_once app_path('Helpers/EncryptionHelper.php');
         require_once app_path('Helpers/GeneralHelper.php');
 
-        View::composer('*', function ($view) {
-            $view->with('appSetting', new BusinessSettingHelper);
-        });
+        View::share('appSetting', new BusinessSettingHelper);
     }
 }

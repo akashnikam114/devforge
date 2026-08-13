@@ -50,7 +50,7 @@ class RestrictionSettingController extends Controller
         if ($data) {
             return view('admin.restriction_settings.edit', compact('data'));
         }
-        return redirect()->route('admin.restriction')->with('error', 'Restriction not found');
+        return redirect()->route('admin.restriction_settings')->with('error', 'Restriction not found');
     }
 
     public function update(Request $request, $id)
@@ -95,7 +95,7 @@ class RestrictionSettingController extends Controller
         $response = $this->service->update($id, $data);
 
         if ($response) {
-            return redirect()->route('admin.restriction')->with('success', 'Restriction settings updated successfully.');
+            return redirect()->route('admin.restriction_settings')->with('success', 'Restriction settings updated successfully.');
         }
 
         return back()->with('error', 'Something went wrong.');

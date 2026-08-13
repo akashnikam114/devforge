@@ -6,51 +6,19 @@ use Google\Auth\Credentials\ServiceAccountCredentials;
 use Illuminate\Support\Facades\Http;
 use Exception;
 use App\Helpers\BusinessSettingHelper;
-use Illuminate\Support\Facades\Log;
 
 class FirebaseService
 {
     private $projectId;
-    private $apiKey;
     private $jsonKeyPath;
 
     public function __construct()
     {
-        $this->projectId = BusinessSettingHelper::getBusinessInfo('firebase_project_id');
-        $this->apiKey = BusinessSettingHelper::getBusinessInfo('firebase_api_key');
-        $this->jsonKeyPath = storage_path('app/public/' . $this->projectId . '-firebase-adminsdk.json');
-    }
-
-    public static function sendOtp(string $phoneNumber, string $recaptchaToken)
-    {
-        try {
-            $instance = new self();
-            $response = Http::post("https://identitytoolkit.googleapis.com/v1/accounts:sendVerificationCode?key=" . $instance->apiKey, [
-                'phoneNumber' => '+91' . $phoneNumber,
-                'recaptchaToken' => $recaptchaToken
-            ]);
-
-            return $response->successful() ? $response->json()['sessionInfo'] : null;
-        } catch (Exception $e) {
-            Log::error("Firebase sendOtp error: " . $e->getMessage());
-            return null;
-        }
-    }
-
-    public static function verifyOtp(string $sessionInfo, string $code): bool
-    {
-        try {
-            $instance = new self();
-            $response = Http::post("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPhoneNumber?key=" . $instance->apiKey, [
-                'sessionInfo' => $sessionInfo,
-                'code' => $code
-            ]);
-
-            return $response->successful();
-        } catch (Exception $e) {
-            Log::error("Firebase verifyOtp error: " . $e->getMessage());
-            return false;
-        }
+        $this->projectId = config('firebase.project_id') ?: BusinessSettingHelper::getBusinessInfo('firebase_project_id');
+        $credentialsPath = config('firebase.credentials');
+        $this->jsonKeyPath = $credentialsPath
+            ? base_path($credentialsPath)
+            : storage_path('app/public/' . $this->projectId . '-firebase-adminsdk.json');
     }
 
     public function sendPushNotification(array $notification)

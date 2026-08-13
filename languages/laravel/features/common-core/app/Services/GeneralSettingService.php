@@ -28,8 +28,6 @@ class GeneralSettingService
 
         $fieldsToUpdate = [
             'site_title' => $data['site_title'],
-            'support_email' => $data['support_email'],
-            'support_phone' => $data['support_phone'] ?? null,
             'default_language' => $data['default_language'],
             'date_format' => $data['date_format'],
             'time_format' => $data['time_format'],

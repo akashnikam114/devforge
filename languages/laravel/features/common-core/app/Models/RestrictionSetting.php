@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Restriction extends Model
+class RestrictionSetting extends Model
 {
     use HasFactory;
+
+    protected $table = 'restriction_settings';
 
     protected $fillable = [
         'restriction_name',

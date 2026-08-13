@@ -28,8 +28,6 @@ class GeneralSettingController extends Controller
     {
         $request->validate([
             'site_title' => 'required|string|max:255',
-            'support_email' => 'required|email|max:255',
-            'support_phone' => 'nullable|string|max:30',
             'default_language' => 'required|string|max:10',
             'date_format' => 'required|string|max:30',
             'time_format' => 'required|string|max:30',
@@ -38,8 +36,6 @@ class GeneralSettingController extends Controller
 
         $data = $request->only([
             'site_title',
-            'support_email',
-            'support_phone',
             'default_language',
             'date_format',
             'time_format',

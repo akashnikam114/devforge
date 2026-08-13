@@ -15,7 +15,7 @@
     <div class="nk-block">
         <div class="row g-gs">
             <div class="col-md-4">
-                <div class="card card-bordered">
+                <div class="card card-bordered dashboard-stat-card">
                     <div class="card-inner">
                         <div class="card-title-group align-start mb-2">
                             <div class="card-title">
@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card card-bordered">
+                <div class="card card-bordered dashboard-stat-card">
                     <div class="card-inner">
                         <div class="card-title-group align-start mb-2">
                             <div class="card-title">

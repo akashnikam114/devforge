@@ -137,9 +137,12 @@ devforge feature PROJECT_NAME
 devforge feature PROJECT_NAME --feature FEATURE_ID
 devforge crud PROJECT_NAME MODULE_NAME
 devforge crud PROJECT_NAME MODULE_NAME --fields name:string,description:text,is_active:boolean
+devforge feature PROJECT_NAME --feature firebase --firebase-project PROJECT --firebase-credentials /path/to/service-account.json
 ```
 
 For Laravel, DevForge checks PHP and Composer before running Composer commands. It then asks for database settings one by one, validates the actual database connection, creates a Laravel 10 project, installs the configured Laravel packages, publishes package config files, creates the storage link, and clears framework caches.
+
+Laravel hosting setup copies root `.htaccess`, root `index.php`, root `server.php`, and `public/.htaccess` from the Laravel template.
 
 After the Laravel project setup starts, DevForge asks for grouped starter features with descriptions, so each setup area is asked only once:
 
@@ -163,13 +166,30 @@ The Laravel starter also asks for timezone and updates `config/app.php`. Default
 RBAC is always included for Laravel. It creates:
 
 - `roles` table with `id`, `name`, `description`, and timestamps
-- `role_id` foreign key on the `users` table
+- `Super Admin` starter role
+- enriched `users` table with nullable email, phone number, `role_id` foreign key, status, UTM/device fields, and soft deletes
+- starter admin user using `admin@example.com` and `Admin@123`
+- `user_otps` table and `UserOtp` model
 - `app/Models/Role.php`
 - `role()` relation on `app/Models/User.php` when that model is available
 
+JWT environment defaults include `JWT_TTL=30` and `JWT_REFRESH_TTL=43200`, which means 30 minutes and 30 days.
+
+Laravel queue jobs are database-backed by default. DevForge writes `QUEUE_CONNECTION=database` and adds the `jobs` table migration.
+
+API request logging uses the `api_logs` daily log channel in `config/logging.php` and keeps seven days of logs at `storage/logs/api.log`.
+
 The Excel setup creates `app/Exports/SampleExport.php` for `maatwebsite/excel` when the Excel Export Feature is selected.
 
-The Common Core Modules Feature is the full reusable admin starter pack. It adds admin auth, dashboard/layout views, admin assets, BusinessSetting, GeneralSetting, restriction settings, banners, push notifications, helpers, encryption helper, Firebase service, models, services, migrations, middleware, and routes. When UI theme setup is selected, DevForge asks for app name, primary color, secondary color, panel title, and panel description, then writes those values to `.env`, `.env.example`, and `config/devforge-ui.php`.
+The Common Core Modules Feature is the full reusable admin starter pack. It adds admin auth, dashboard/layout views, admin assets, BusinessSetting, GeneralSetting, restriction settings, banners, push notifications, helpers, encryption helper, Firebase service, models, services, migrations, middleware, storage folders, and routes. Admin images live under `public/assets/admin/images` and include a sidebar-ready `app-logo.png`, `default-image.png`, and `favicons/favicon.ico`; PWA uses `public/pwa/app-icon.png`. When UI theme setup is selected, DevForge asks for app name, primary color, secondary color, panel title, and panel description, then writes `APP_UI_*` values to `.env`, `.env.example`, and `config/app-ui.php`.
+
+Admin UI setup applies the selected theme color to buttons, header/profile bar states, dropdown actions, form focus states, sidebar menu states, pagination, badges, dashboard card accents, and Select2 focus/highlight states. General Settings uses Select2 for language, date format, and time format. Business Settings uses Select2 for currency and OTP provider, while sensitive values such as `encryption_key` remain stored but are not shown in the admin panel.
+
+API normalization middleware accepts app request payloads in `camelCase`, converts them to `snake_case` for Laravel processing, and converts JSON responses back to `camelCase`.
+
+Laravel middleware setup registers secure headers globally, keeps API request normalization/logging/sanitization in the API middleware group, and registers `api.auth`, `app.maintenance`, and `admin.maintenance` aliases for route usage. `AppServiceProvider` shares the common `appSetting` helper with all Blade views.
+
+Firebase setup asks for a Firebase project name, then asks you to drag/drop or paste the uploaded service-account `.json` file path into the terminal. DevForge copies the JSON to `storage/app/public/{firebase-project-name}-firebase-adminsdk.json` and writes `FIREBASE_PROJECT_ID` plus `FIREBASE_CREDENTIALS`.
 
 Selected starter structure creates:
 
@@ -177,10 +197,12 @@ Selected starter structure creates:
 - `app/Services/.gitkeep`
 - `app/Traits/.gitkeep`
 - `public/pwa/`
-- `public/assets/css/.gitkeep`
-- `public/assets/images/.gitkeep`
-- `public/assets/js/.gitkeep`
-- `public/assets/fonts/.gitkeep`
+- `public/assets/web/css/.gitkeep`
+- `public/assets/web/images/.gitkeep`
+- `public/assets/web/js/.gitkeep`
+- `public/assets/web/fonts/.gitkeep`
+- `storage/app/public/Others/`
+- `storage/app/public/Restriction/Maintenance_Mode.png`
 
 Base Laravel structure always includes:
 
@@ -198,6 +220,8 @@ Base Laravel structure always includes:
 - `routes/api/v1/api.php`
 
 In full Laravel installs, DevForge removes the default `routes/api.php` file and updates `RouteServiceProvider` to load `routes/api/v1/api.php`.
+
+Laravel route files keep package imports and controller imports at the top of the file. Generated web/API routes use imported controller class names instead of inline fully qualified controller names.
 
 ## Adding skipped Laravel features later
 

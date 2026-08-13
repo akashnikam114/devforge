@@ -30,7 +30,7 @@ class CreateBusinessSettingsTable extends Migration
             ],
             [
                 'key' => 'app_logo',
-                'value' => 'app_logo.png',
+                'value' => 'app-logo.png',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -48,7 +48,7 @@ class CreateBusinessSettingsTable extends Migration
             ],
             [
                 'key' => 'currency_symbol',
-                'value' => 'USD',
+                'value' => '__CURRENCY_SYMBOL__',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -65,14 +65,8 @@ class CreateBusinessSettingsTable extends Migration
                 'updated_at' => now(),
             ],
             [
-                'key' => 'firebase_api_key',
-                'value' => 'your-firebase-api-key',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
                 'key' => 'encryption_key',
-                'value' => 'secure-encryption-key-here',
+                'value' => base64_encode(random_bytes(32)),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -85,6 +79,18 @@ class CreateBusinessSettingsTable extends Migration
             [
                 'key' => 'terms_and_conditions',
                 'value' => 'Update your terms and conditions content from the admin panel.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'key' => 'default_otp',
+                'value' => '123456',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'key' => 'otp_provider',
+                'value' => 'None',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

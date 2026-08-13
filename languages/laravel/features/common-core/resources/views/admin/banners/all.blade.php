@@ -75,7 +75,7 @@
                                 var imageUrl = '{{ asset('storage') }}' + '/' + row.image;
                                 return '<img src="' + imageUrl + '" style="width: 110px; height: 60px; border-radius: 4px;">';
                             } else {
-                                var imageUrl = '{{ asset('assets/admin/img/default-image.jpeg') }}';
+                                var imageUrl = '{{ asset('assets/admin/images/default-image.png') }}';
                                 return '<img src="' + imageUrl + '" style="width: 60px; height: 60px;">';
                             }
                         }
@@ -109,7 +109,7 @@
                         $.ajax({
                             headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
                             url: "{{ url('admin/banners/delete') }}/" + id,
-                            type: "GET",
+                            type: "DELETE",
                             dataType: "JSON",
                             success: function(response) {
                                 if (response.status == 'success') {

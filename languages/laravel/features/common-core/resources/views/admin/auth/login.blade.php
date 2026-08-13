@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="{{ $appSetting::getBusinessInfo('app_name') }} - Modern application management platform.">
     <title>Login | {{ $appSetting::getBusinessInfo('app_name') }}</title>
-    <link rel="shortcut icon" href="{{ asset('assets/admin/img/favicons/favicon.ico') }}" type="image/x-icon">
-    <link rel="icon" href="{{ asset('assets/admin/img/favicons/favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('assets/admin/images/favicons/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('assets/admin/images/favicons/favicon.ico') }}" type="image/x-icon">
     <link rel="manifest" href="{{ asset('pwa/manifest.json') }}">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,24 +18,28 @@
         }
 
         .bg-app {
-            background-color: {{ config('devforge-ui.primary_color', '#049C9C') }};
+            background-color: {{ config('app-ui.primary_color', '#049C9C') }};
         }
 
         .text-app {
-            color: {{ config('devforge-ui.primary_color', '#049C9C') }};
+            color: {{ config('app-ui.primary_color', '#049C9C') }};
+        }
+
+        .theme-focus:focus {
+            border-color: {{ config('app-ui.primary_color', '#049C9C') }};
+            box-shadow: 0 0 0 4px color-mix(in srgb, {{ config('app-ui.primary_color', '#049C9C') }} 12%, transparent);
+        }
+
+        .group:focus-within .theme-icon {
+            color: {{ config('app-ui.primary_color', '#049C9C') }};
+        }
+
+        .theme-hover:hover {
+            color: {{ config('app-ui.primary_color', '#049C9C') }};
         }
 
         .login-gradient {
-            background: linear-gradient(135deg, {{ config('devforge-ui.primary_color', '#049C9C') }} 0%, {{ config('devforge-ui.secondary_color', '#037a7a') }} 100%);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
-        }
-
-        .animate-float {
-            animation: float 5s ease-in-out infinite;
+            background: linear-gradient(135deg, {{ config('app-ui.primary_color', '#049C9C') }} 0%, {{ config('app-ui.secondary_color', '#037a7a') }} 100%);
         }
     </style>
 </head>
@@ -45,7 +49,7 @@
             <div class="w-full max-w-sm">
                 <div class="mb-10 text-center lg:text-left">
                     <div class="mb-6 flex justify-center lg:justify-start">
-                        <img src="{{ asset('assets/admin/img/app_logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} Logo" class="h-14 w-auto">
+                        <img src="{{ asset('assets/admin/images/app-logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} Logo" class="h-14 w-auto">
                     </div>
                     <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome Back</h2>
                     <p class="mt-2 text-gray-500 font-medium">Please enter your admin credentials to securely access the management panel.</p>
@@ -56,13 +60,13 @@
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{{ __('Email Address') }}</label>
                         <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#049C9C] transition-colors">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 theme-icon transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206" />
                                 </svg>
                             </div>
                             <input type="email" name="email" value="{{ old('email') }}"
-                                class="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:ring-4 focus:ring-[#049C9C]/10 focus:border-[#049C9C] transition-all duration-200 outline-none placeholder:text-gray-400"
+                                class="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white theme-focus transition-all duration-200 outline-none placeholder:text-gray-400"
                                 placeholder="e.g. abc@example.com">
                         </div>
                         @error('email')
@@ -73,16 +77,16 @@
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{{ __('Password') }}</label>
                         <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#049C9C] transition-colors">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 theme-icon transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
                             </div>
                             <input id="password-field" type="password" name="password"
-                                class="w-full pl-11 pr-12 py-3.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:ring-4 focus:ring-[#049C9C]/10 focus:border-[#049C9C] transition-all duration-200 outline-none placeholder:text-gray-400"
+                                class="w-full pl-11 pr-12 py-3.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white theme-focus transition-all duration-200 outline-none placeholder:text-gray-400"
                                 placeholder="••••••••">
 
-                            <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#049C9C] transition-colors focus:outline-none">
+                            <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 theme-hover transition-colors focus:outline-none">
                                 <svg id="eye-icon" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -115,17 +119,15 @@
             <div class="absolute bottom-0 left-0 w-80 h-80 bg-black/5 rounded-full -ml-20 -mb-20"></div>
 
             <div class="relative z-10 text-center px-12 xl:px-24">
-                <div class="animate-float mb-6">
-                    <img src="{{ asset('assets/admin/img/login_illustration.png') }}"
-                        alt="{{ $appSetting::getBusinessInfo('app_name') }} admin illustration"
-                        class="w-full max-w-md xl:max-w-lg mx-auto drop-shadow-2xl">
+                <div class="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-3xl bg-white/15 shadow-2xl shadow-black/10 ring-1 ring-white/20">
+                    <img src="{{ asset('assets/admin/images/app-logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} Logo" class="h-14 w-14">
                 </div>
 
                 <div class="max-w-md mx-auto text-white">
                     <h2 class="text-3xl font-extrabold mb-3">Welcome to {{ $appSetting::getBusinessInfo('app_name') }}!</h2>
-                    <h4 class="text-md font-extrabold mb-3">{{ config('devforge-ui.panel_title', 'Admin Panel') }}</h4>
+                    <h4 class="text-md font-extrabold mb-3">{{ config('app-ui.panel_title', 'Admin Panel') }}</h4>
                     <p class="text-white/80 text-sm md:text-base font-medium leading-relaxed">
-                        {{ config('devforge-ui.panel_description', 'Securely manage users, settings, content, and application operations from one dashboard.') }}
+                        {{ config('app-ui.panel_description', 'Securely manage users, settings, content, and application operations from one dashboard.') }}
                     </p>
                 </div>
             </div>

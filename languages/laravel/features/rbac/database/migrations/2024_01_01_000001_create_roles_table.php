@@ -17,7 +17,7 @@ return new class extends Migration
         });
 
         DB::table('roles')->insert([
-            'name' => 'Administrator',
+            'name' => 'Super Admin',
             'description' => 'Unrestricted access to all modules, settings, and user management across the system.',
             'created_at' => now(),
             'updated_at' => now(),

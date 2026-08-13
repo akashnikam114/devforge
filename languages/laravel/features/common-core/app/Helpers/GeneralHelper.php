@@ -2,14 +2,14 @@
 
 namespace App\Helpers;
 
-use App\Models\Restriction;
+use App\Models\RestrictionSetting;
 use Illuminate\Http\Request;
 
 class GeneralHelper
 {
     public static function getRestrictionData($restrictionId)
     {
-        $data = Restriction::select(['title', 'image', 'sub_title', 'url_label', 'redirection_url', 'is_button_enabled'])->find($restrictionId);
+        $data = RestrictionSetting::select(['title', 'image', 'sub_title', 'url_label', 'redirection_url', 'is_button_enabled'])->find($restrictionId);
 
         $message = 'Service temporarily unavailable. Please try again later.';
         $statusCode = 499;

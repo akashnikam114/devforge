@@ -36,46 +36,27 @@
 
                             <div class="col-lg-12">
                                 <div class="form-group">
-                                    <label class="form-label" for="support_email">Support Email</label>
-                                    <div class="form-control-wrap">
-                                        <input type="email"
-                                            class="form-control form-control-lg @error('support_email') is-invalid @enderror"
-                                            name="support_email" id="support_email" placeholder="support@example.com"
-                                            value="{{ old('support_email', $data->support_email) }}">
-                                        @error('support_email')
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label class="form-label" for="support_phone">Support Phone</label>
-                                    <div class="form-control-wrap">
-                                        <input type="text"
-                                            class="form-control form-control-lg @error('support_phone') is-invalid @enderror"
-                                            name="support_phone" id="support_phone" placeholder="+1 000 000 0000"
-                                            value="{{ old('support_phone', $data->support_phone) }}">
-                                        @error('support_phone')
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-12">
-                                <div class="form-group">
                                     <label class="form-label" for="default_language">Default Language</label>
                                     <div class="form-control-wrap">
-                                        <input type="text"
-                                            class="form-control form-control-lg @error('default_language') is-invalid @enderror"
-                                            name="default_language" id="default_language" placeholder="en"
-                                            value="{{ old('default_language', $data->default_language) }}">
+                                        <select class="form-select js-select2 @error('default_language') is-invalid @enderror"
+                                            name="default_language" id="default_language" data-ui="lg" data-search="on"
+                                            data-placeholder="Select Language">
+                                            @foreach ([
+                                                'en' => 'English',
+                                                'hi' => 'Hindi',
+                                                'mr' => 'Marathi',
+                                                'gu' => 'Gujarati',
+                                                'ta' => 'Tamil',
+                                                'te' => 'Telugu',
+                                                'kn' => 'Kannada',
+                                                'ml' => 'Malayalam',
+                                                'bn' => 'Bengali',
+                                            ] as $value => $label)
+                                                <option value="{{ $value }}" {{ old('default_language', $data->default_language) === $value ? 'selected' : '' }}>
+                                                    {{ $label }} ({{ $value }})
+                                                </option>
+                                            @endforeach
+                                        </select>
                                         @error('default_language')
                                             <span class="invalid-feedback">
                                                 <strong>{{ $message }}</strong>
@@ -89,10 +70,22 @@
                                 <div class="form-group">
                                     <label class="form-label" for="date_format">Date Format</label>
                                     <div class="form-control-wrap">
-                                        <input type="text"
-                                            class="form-control form-control-lg @error('date_format') is-invalid @enderror"
-                                            name="date_format" id="date_format" placeholder="Y-m-d"
-                                            value="{{ old('date_format', $data->date_format) }}">
+                                        <select class="form-select js-select2 @error('date_format') is-invalid @enderror"
+                                            name="date_format" id="date_format" data-ui="lg" data-search="off"
+                                            data-placeholder="Select Date Format">
+                                            @foreach ([
+                                                'Y-m-d' => now()->format('Y-m-d'),
+                                                'd-m-Y' => now()->format('d-m-Y'),
+                                                'm/d/Y' => now()->format('m/d/Y'),
+                                                'd/m/Y' => now()->format('d/m/Y'),
+                                                'M d, Y' => now()->format('M d, Y'),
+                                                'd M Y' => now()->format('d M Y'),
+                                            ] as $value => $label)
+                                                <option value="{{ $value }}" {{ old('date_format', $data->date_format) === $value ? 'selected' : '' }}>
+                                                    {{ $label }} ({{ $value }})
+                                                </option>
+                                            @endforeach
+                                        </select>
                                         @error('date_format')
                                             <span class="invalid-feedback">
                                                 <strong>{{ $message }}</strong>
@@ -106,10 +99,20 @@
                                 <div class="form-group">
                                     <label class="form-label" for="time_format">Time Format</label>
                                     <div class="form-control-wrap">
-                                        <input type="text"
-                                            class="form-control form-control-lg @error('time_format') is-invalid @enderror"
-                                            name="time_format" id="time_format" placeholder="H:i"
-                                            value="{{ old('time_format', $data->time_format) }}">
+                                        <select class="form-select js-select2 @error('time_format') is-invalid @enderror"
+                                            name="time_format" id="time_format" data-ui="lg" data-search="off"
+                                            data-placeholder="Select Time Format">
+                                            @foreach ([
+                                                'H:i' => now()->format('H:i'),
+                                                'h:i A' => now()->format('h:i A'),
+                                                'H:i:s' => now()->format('H:i:s'),
+                                                'h:i:s A' => now()->format('h:i:s A'),
+                                            ] as $value => $label)
+                                                <option value="{{ $value }}" {{ old('time_format', $data->time_format) === $value ? 'selected' : '' }}>
+                                                    {{ $label }} ({{ $value }})
+                                                </option>
+                                            @endforeach
+                                        </select>
                                         @error('time_format')
                                             <span class="invalid-feedback">
                                                 <strong>{{ $message }}</strong>

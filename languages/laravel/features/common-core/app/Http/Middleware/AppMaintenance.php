@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use App\Models\Restriction;
+use App\Models\RestrictionSetting;
 use App\Helpers\GeneralHelper;
 
 class AppMaintenance
@@ -15,7 +15,7 @@ class AppMaintenance
             return $next($request);
         }
 
-        $restriction = Restriction::select(['id', 'is_restriction_enabled'])->find(1);
+        $restriction = RestrictionSetting::select(['id', 'is_restriction_enabled'])->find(1);
 
         if ($restriction && $restriction->is_restriction_enabled) {
             [$responseData, $statusCode] = GeneralHelper::getRestrictionData(1);

@@ -23,10 +23,10 @@ class BusinessSettingService
             'currency_symbol',
             'admin_maintenance_mode',
             'firebase_project_id',
-            'firebase_api_key',
-            'encryption_key',
             'privacy_policy',
             'terms_and_conditions',
+            'default_otp',
+            'otp_provider',
         ];
 
         return $this->model

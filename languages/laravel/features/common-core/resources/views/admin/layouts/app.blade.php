@@ -6,8 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="{{ $appSetting::getBusinessInfo('app_name') }} - Modern application management platform.">
     <title>{{ $appSetting::getBusinessInfo('app_name') }} | Admin Panel</title>
-    <link rel="shortcut icon" href="{{ asset('assets/admin/img/favicons/favicon.ico') }}" type="image/x-icon">
-    <link rel="icon" href="{{ asset('assets/admin/img/favicons/favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('assets/admin/images/favicons/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('assets/admin/images/favicons/favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('assets/admin/css/dashlite.css?ver=3.3.0') }}">
     <link id="skin-default" rel="stylesheet" href="{{ asset('assets/admin/css/theme.css?ver=3.3.0') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/css/editors/quill.css?ver=3.3.0') }}">
@@ -18,8 +18,61 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <style>
+        :root {
+            --app-primary: {{ config('app-ui.primary_color', '#049C9C') }};
+            --app-secondary: {{ config('app-ui.secondary_color', '#037a7a') }};
+            --app-primary-soft: color-mix(in srgb, var(--app-primary) 10%, white);
+        }
+
         .btn-primary {
-            background-color: {{ config('devforge-ui.primary_color', '#049C9C') }} !important;
+            background-color: var(--app-primary) !important;
+            border-color: var(--app-primary) !important;
+        }
+
+        .text-primary,
+        .text-primary-alt,
+        .link-primary {
+            color: var(--app-primary) !important;
+        }
+
+        a {
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        a:hover,
+        .link-list a:hover,
+        .link-list-menu a:hover {
+            color: var(--app-primary) !important;
+        }
+
+        .bg-primary,
+        .badge-primary,
+        .badge-dot.bg-primary {
+            background-color: var(--app-primary) !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--app-primary) !important;
+            border-color: var(--app-primary) !important;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus {
+            color: #ffffff !important;
+            background-color: var(--app-primary) !important;
+            border-color: var(--app-primary) !important;
+        }
+
+        .form-control:focus,
+        .form-select:focus,
+        .custom-select:focus {
+            border-color: var(--app-primary) !important;
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-primary) 12%, transparent) !important;
+        }
+
+        .custom-control-input:checked ~ .custom-control-label::before {
+            background-color: var(--app-primary) !important;
+            border-color: var(--app-primary) !important;
         }
 
         .back-to {
@@ -28,7 +81,182 @@
         }
 
         .back-to:hover {
-            color: {{ config('devforge-ui.primary_color', '#049C9C') }};
+            color: var(--app-primary);
+        }
+
+        .logo-link {
+            display: flex;
+            align-items: center;
+            min-height: 64px;
+        }
+
+        .logo-img {
+            max-height: 44px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nk-header {
+            border-bottom-color: color-mix(in srgb, var(--app-primary) 12%, #e5e9f2);
+        }
+
+        .nk-header .nk-nav-toggle:hover,
+        .nk-header .nk-quick-nav-icon:hover,
+        .nk-header .dropdown-toggle:hover,
+        .nk-header .dark-switch:hover,
+        .nk-header .dark-switch.active {
+            color: var(--app-primary) !important;
+        }
+
+        .nk-header .nk-news-icon,
+        .nk-header .user-status {
+            color: var(--app-primary) !important;
+        }
+
+        .nk-header .user-avatar,
+        .dropdown-menu .user-avatar {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, var(--app-primary), var(--app-secondary)) !important;
+        }
+
+        .dropdown-menu .dropdown-inner {
+            border-color: color-mix(in srgb, var(--app-primary) 10%, #e5e9f2);
+        }
+
+        .dropdown-menu .link-list a:hover,
+        .dropdown-menu .link-list-menu a:hover,
+        .dropdown-menu .link-list-menu a.active {
+            color: var(--app-primary) !important;
+            background-color: var(--app-primary-soft);
+        }
+
+        .dropdown-menu .link-list a:hover .icon,
+        .dropdown-menu .link-list-menu a:hover .icon,
+        .dropdown-menu .link-list-menu a.active .icon {
+            color: var(--app-primary) !important;
+        }
+
+        .nk-sidebar {
+            border-right-color: color-mix(in srgb, var(--app-primary) 13%, #e5e9f2);
+        }
+
+        .nk-sidebar .nk-menu-heading .overline-title {
+            color: var(--app-primary) !important;
+        }
+
+        .nk-sidebar .nk-menu-link:hover,
+        .nk-sidebar .nk-menu-item.active > .nk-menu-link,
+        .nk-sidebar .nk-menu-item.current-menu > .nk-menu-link,
+        .nk-sidebar .nk-menu-item.has-sub.active > .nk-menu-link {
+            color: var(--app-primary) !important;
+            background-color: var(--app-primary-soft);
+        }
+
+        .nk-sidebar .nk-menu-link:hover .nk-menu-icon,
+        .nk-sidebar .nk-menu-item.active > .nk-menu-link .nk-menu-icon,
+        .nk-sidebar .nk-menu-item.current-menu > .nk-menu-link .nk-menu-icon,
+        .nk-sidebar .nk-menu-item.has-sub.active > .nk-menu-link .nk-menu-icon {
+            color: var(--app-primary) !important;
+        }
+
+        .nk-sidebar .nk-menu-sub .nk-menu-link:hover,
+        .nk-sidebar .nk-menu-sub .nk-menu-item.active > .nk-menu-link {
+            color: var(--app-primary) !important;
+        }
+
+        .card {
+            border-radius: 8px;
+        }
+
+        .dashboard-stat-card {
+            border-radius: 8px;
+            overflow: hidden;
+            border-color: color-mix(in srgb, var(--app-primary) 13%, #dbdfea);
+            box-shadow: 0 8px 24px rgba(31, 43, 58, 0.06);
+        }
+
+        .dashboard-stat-card .card-hint {
+            color: var(--app-primary);
+        }
+
+        .page-item.active .page-link {
+            color: #ffffff !important;
+            background-color: var(--app-primary) !important;
+            border-color: var(--app-primary) !important;
+        }
+
+        .page-link:hover,
+        .page-link:focus {
+            color: var(--app-primary) !important;
+            background-color: var(--app-primary-soft);
+            border-color: color-mix(in srgb, var(--app-primary) 24%, #dbdfea);
+            box-shadow: none;
+        }
+
+        .alert-primary {
+            color: color-mix(in srgb, var(--app-primary) 70%, #1f2b3a) !important;
+            background-color: var(--app-primary-soft) !important;
+            border-color: color-mix(in srgb, var(--app-primary) 22%, #dbdfea) !important;
+        }
+
+        .spinner-border.text-primary,
+        .spinner-grow.text-primary {
+            color: var(--app-primary) !important;
+        }
+
+        .select2-container--default .select2-selection--single:focus,
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border-color: var(--app-primary) !important;
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-primary) 12%, transparent);
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered,
+        .select2-container--default .select2-results__option {
+            color: #364a63 !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__placeholder {
+            color: #8094ae !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: var(--app-primary) !important;
+            color: #ffffff !important;
+        }
+
+        .select2-container--default .select2-results__option[aria-selected="true"] {
+            background-color: var(--app-primary-soft) !important;
+            color: #1f2b3a !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected="true"] {
+            background-color: var(--app-primary) !important;
+            color: #ffffff !important;
+        }
+
+        .dark-mode .select2-container--default .select2-selection--single .select2-selection__rendered,
+        .dark-mode .select2-container--default .select2-results__option {
+            color: #dfe9fe !important;
+        }
+
+        .dark-mode .select2-container--default .select2-results__option[aria-selected="true"] {
+            background-color: color-mix(in srgb, var(--app-primary) 28%, #101924) !important;
+            color: #ffffff !important;
+        }
+
+        .dark-mode .nk-header,
+        .dark-mode .dropdown-menu .dropdown-inner {
+            border-color: color-mix(in srgb, var(--app-primary) 24%, #203247);
+        }
+
+        .dark-mode .dropdown-menu .link-list a:hover,
+        .dark-mode .dropdown-menu .link-list-menu a:hover,
+        .dark-mode .dropdown-menu .link-list-menu a.active,
+        .dark-mode .page-link:hover,
+        .dark-mode .page-link:focus {
+            background-color: color-mix(in srgb, var(--app-primary) 24%, #101924) !important;
+            color: #ffffff !important;
         }
 
         .nk-tb-actions {
@@ -261,24 +489,37 @@
         });
 
         $(document).ready(function() {
+            function initializeSelect2Fields($scope, options = {}) {
+                if (typeof NioApp === 'undefined' || typeof NioApp.Select2 !== 'function') {
+                    return;
+                }
+
+                const $selects = $scope.find('.js-select2');
+
+                if ($selects.length === 0) {
+                    return;
+                }
+
+                $selects.each(function() {
+                    const $this = $(this);
+
+                    if ($this.data('select2')) {
+                        $this.select2('destroy');
+                    }
+
+                    const searchSetting = $this.data('search') === 'on' ? 0 : -1;
+                    NioApp.Select2($this, {
+                        ...options,
+                        minimumResultsForSearch: searchSetting
+                    });
+                });
+            }
+
+            initializeSelect2Fields($(document));
+
             $('.modal').on('shown.bs.modal', function() {
                 const $modal = $(this);
-                const $selects = $modal.find('.js-select2');
-
-                if ($selects.length > 0) {
-                    $selects.each(function() {
-                        const $this = $(this);
-
-                        if ($this.data('select2')) {
-                            $this.select2('destroy');
-                        }
-
-                        NioApp.Select2($this, {
-                            dropdownParent: $modal,
-                            minimumResultsForSearch: $this.data('search') === 'on' ? 0 : -1
-                        });
-                    });
-                }
+                initializeSelect2Fields($modal, { dropdownParent: $modal });
             });
         });
 

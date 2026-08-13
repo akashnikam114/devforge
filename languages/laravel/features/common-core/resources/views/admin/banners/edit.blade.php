@@ -40,7 +40,7 @@
                                     <div class="form-control-wrap mt-3">
                                         <label class="form-label d-block">Preview Image:</label>
                                         <img id="image-preview"
-                                            src="{{ ($data->image) ? asset('storage/' . $data->image) : asset('assets/admin/img/default-image.jpeg') }}"
+                                            src="{{ ($data->image) ? asset('storage/' . $data->image) : asset('assets/admin/images/default-image.png') }}"
                                             alt="Image Preview" style="max-width: 100%; max-height: 130px; border-radius: 4px;">
                                     </div>
                                 </div>

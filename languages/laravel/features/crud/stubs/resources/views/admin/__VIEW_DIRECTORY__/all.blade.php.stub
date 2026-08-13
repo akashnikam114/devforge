@@ -87,7 +87,7 @@ __TABLE_COLUMNS__
                         $.ajax({
                             headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
                             url: "{{ url('admin/__ROUTE_NAME__/delete') }}/" + id,
-                            type: "GET",
+                            type: "DELETE",
                             dataType: "JSON",
                             success: function(response) {
                                 if (response.status == 'success') {

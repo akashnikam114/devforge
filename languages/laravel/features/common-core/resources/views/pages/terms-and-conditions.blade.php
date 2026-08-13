@@ -5,10 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms and Conditions | {{ $appSetting::getBusinessInfo('app_name') }}</title>
-    <link rel="shortcut icon" href="{{ asset('assets/admin/img/favicons/favicon.ico') }}" type="image/x-icon">
-    <link rel="icon" href="{{ asset('assets/admin/img/favicons/favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('assets/admin/images/favicons/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('assets/admin/images/favicons/favicon.ico') }}" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        :root {
+            --app-primary: {{ config('app-ui.primary_color', '#049C9C') }};
+            --app-secondary: {{ config('app-ui.secondary_color', '#037a7a') }};
+        }
+        .theme-soft { background: color-mix(in srgb, var(--app-primary) 8%, white); border-color: color-mix(in srgb, var(--app-primary) 18%, white); }
+        .theme-dot { background: var(--app-primary); }
+        .theme-text { color: var(--app-primary); }
+        .theme-gradient { background: linear-gradient(135deg, var(--app-primary), var(--app-secondary)); }
         .dynamic-content h1 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a; }
         .dynamic-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 2rem; margin-bottom: 1rem; color: #0f172a; }
         .dynamic-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #0f172a; }
@@ -22,26 +30,22 @@
 
 <body class="bg-gray-50 text-gray-800 leading-normal">
     <div class="relative py-16 sm:py-24 overflow-hidden">
-        <div
-            class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full bg-gradient-to-r from-teal-50/50 via-sky-50/50 to-indigo-50/50 blur-3xl -z-10">
-        </div>
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full theme-gradient opacity-10 blur-3xl -z-10"></div>
         <div class="max-w-7xl mx-auto px-6 text-center">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-100 mb-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full theme-soft mb-6">
                 <span class="relative flex h-2 w-2">
-                    <span
-                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full theme-dot opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 theme-dot"></span>
                 </span>
-                <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-teal-700">Legal Document</span>
+                <span class="text-[10px] font-bold uppercase tracking-[0.2em] theme-text">Legal Document</span>
             </div>
 
-           <h1 class="text-5xl md:text-7xl font-black tracking-tight text-slate-900 mb-6">
-               Terms & <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">Conditions</span>
-           </h1>
+            <h1 class="text-5xl md:text-7xl font-black tracking-tight text-slate-900 mb-6">
+                Terms & <span class="text-transparent bg-clip-text theme-gradient">Conditions</span>
+            </h1>
 
             <p class="text-slate-500 text-lg font-medium max-w-xl mx-auto leading-relaxed">
-                Please read these terms carefully. They govern your use of the services provided by <span
-                    class="text-slate-900 font-bold">{{ $appSetting::getBusinessInfo('app_name') }}.</span>
+                Please read these terms carefully. They govern your use of the services provided by <span class="text-slate-900 font-bold">{{ $appSetting::getBusinessInfo('app_name') }}.</span>
             </p>
 
             <div class="mt-10 flex justify-center items-center gap-4">
