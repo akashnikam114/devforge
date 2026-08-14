@@ -51,11 +51,7 @@
                                     @php
                                         $selectOptions = [
                                             'currency_symbol' => [
-                                                '₹' => 'INR - ₹',
-                                                '$' => 'USD - $',
-                                                '€' => 'EUR - €',
-                                                '£' => 'GBP - £',
-                                                'AED' => 'AED',
+                                                '₹' => 'INR - ₹'
                                             ],
                                             'otp_provider' => [
                                                 'None' => 'None',
