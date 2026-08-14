@@ -51,7 +51,11 @@
                                     @php
                                         $selectOptions = [
                                             'currency_symbol' => [
-                                                '₹' => 'INR - ₹'
+                                                '₹' => 'INR - ₹',
+                                                '$' => 'USD - $',
+                                                '€' => 'EUR - €',
+                                                '£' => 'GBP - £',
+                                                'AED' => 'AED',
                                             ],
                                             'otp_provider' => [
                                                 'None' => 'None',
@@ -72,7 +76,7 @@
                                                     <select class="form-select js-select2 @error($business->key) is-invalid @enderror"
                                                         name="{{ $business->key }}" id="{{ $business->key }}" data-ui="lg"
                                                         data-search="off" data-placeholder="Select {{ ucwords(str_replace('_', ' ', $business->key)) }}">
-                                                        <option value="" disabled {{ old($business->key, $business->value) ? '' : 'selected' }}>Select {{ ucwords(str_replace('_', ' ', $business->key)) }}</option>
+                                                        <option value="select_option" disabled {{ old($business->key, $business->value) ? '' : 'selected' }}>Select {{ ucwords(str_replace('_', ' ', $business->key)) }}</option>
                                                         @foreach ($selectOptions[$business->key] as $value => $label)
                                                             <option value="{{ $value }}" {{ old($business->key, $business->value) === $value ? 'selected' : '' }}>
                                                                 {{ $label }}

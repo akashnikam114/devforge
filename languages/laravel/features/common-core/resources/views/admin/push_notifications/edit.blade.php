@@ -81,7 +81,7 @@
                                     <label class="form-label" for="is_active">Status</label>
                                     <div class="form-control-wrap">
                                         <select class="form-control form-control-lg @error('is_active') is-invalid @enderror" name="is_active" id="is_active">
-                                            <option value="" disabled {{ old('is_active', $data->is_active) === null ? 'selected' : '' }}>Select Status</option>
+                                            <option value="select_status" disabled {{ old('is_active', $data->is_active) === null ? 'selected' : '' }}>Select Status</option>
                                             <option value="1" {{ old('is_active', $data->is_active) == 1 ? 'selected' : '' }}>Active</option>
                                             <option value="0" {{ old('is_active', $data->is_active) == 0 ? 'selected' : '' }}>Inactive</option>
                                         </select>

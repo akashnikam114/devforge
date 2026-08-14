@@ -29,7 +29,7 @@
                                     <label class="form-label" for="platform">Platform</label>
                                     <div class="form-control-wrap">
                                         <select class="form-select js-select2 @error('platform') is-invalid @enderror" data-ui="lg" data-search="on" name="platform" id="platform">
-                                            <option value="" disabled {{ old('platform', $data->platform) ? '' : 'selected' }}>Select Platform</option>
+                                            <option value="select_platform" disabled {{ old('platform', $data->platform) ? '' : 'selected' }}>Select Platform</option>
                                             <option value="android" {{ old('platform', $data->platform) == 'android' ? 'selected' : '' }}>Android</option>
                                             <option value="ios" {{ old('platform', $data->platform) == 'ios' ? 'selected' : '' }}>iOS</option>
                                         </select>
