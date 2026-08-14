@@ -10,6 +10,11 @@
     "adminUiTheme": false,
     "adminAssets": false,
     "commonCore": false,
+    "adminActivityLog": false,
+    "users": false,
+    "appRelease": false,
+    "apiRateLimit": false,
+    "paymentGateway": false,
     "middleware": false,
     "firebase": false,
     "excelExport": true,
@@ -209,7 +214,7 @@
       "id": "common-core",
       "title": "Common Core Modules Feature",
       "group": "Admin",
-      "description": "Adds common admin modules for BusinessSetting, GeneralSetting, restrictions, banners, push notifications, helpers, encryption, Firebase service, admin auth, migrations, reusable error pages, and admin views.",
+      "description": "Adds common admin modules for BusinessSetting, GeneralSetting, app releases, restrictions, banners, push notifications, helpers, encryption, Firebase service, admin auth, migrations, reusable error pages, and admin views.",
       "autoloadFiles": [
         "app/Helpers/BusinessSettingHelper.php",
         "app/Helpers/EncryptionHelper.php",
@@ -241,11 +246,23 @@
           "target": "app"
         },
         {
+          "source": "app-release/app",
+          "target": "app"
+        },
+        {
           "source": "common-core/database",
           "target": "database"
         },
         {
+          "source": "app-release/database",
+          "target": "database"
+        },
+        {
           "source": "common-core/resources",
+          "target": "resources"
+        },
+        {
+          "source": "app-release/resources",
           "target": "resources"
         },
         {
@@ -261,6 +278,146 @@
           "target": "public/assets/admin"
         }
       ]
+    },
+    {
+      "id": "app-release",
+      "title": "App Release Feature",
+      "group": "Admin",
+      "description": "Adds an admin App Release module for Android/iOS latest versions, force-update flags, and release notes.",
+      "files": [
+        {
+          "source": "app-release/app/Models/AppRelease.php",
+          "target": "app/Models/AppRelease.php"
+        },
+        {
+          "source": "app-release/app/Services/AppReleaseService.php",
+          "target": "app/Services/AppReleaseService.php"
+        },
+        {
+          "source": "app-release/app/Http/Controllers/Admin/AppReleaseController.php",
+          "target": "app/Http/Controllers/Admin/AppReleaseController.php"
+        },
+        {
+          "source": "app-release/database/migrations/2026_01_02_122909_create_app_releases_table.php",
+          "target": "database/migrations/2026_01_02_122909_create_app_releases_table.php"
+        },
+        {
+          "source": "app-release/resources/views/admin/app_releases/all.blade.php",
+          "target": "resources/views/admin/app_releases/all.blade.php"
+        },
+        {
+          "source": "app-release/resources/views/admin/app_releases/add.blade.php",
+          "target": "resources/views/admin/app_releases/add.blade.php"
+        },
+        {
+          "source": "app-release/resources/views/admin/app_releases/edit.blade.php",
+          "target": "resources/views/admin/app_releases/edit.blade.php"
+        }
+      ],
+      "append": [
+        {
+          "source": "app-release/routes/web.php",
+          "target": "routes/web.php",
+          "marker": "Route::prefix('app_releases')->group"
+        }
+      ]
+    },
+    {
+      "id": "admin-activity-log",
+      "title": "Admin Panel Activity Log Feature",
+      "group": "Admin",
+      "description": "Adds Spatie-powered admin activity logs, login/logout event listeners, request activity middleware, admin routes, and Activity Logs UI.",
+      "env": {
+        "ACTIVITY_LOGGER_ENABLED": "true",
+        "ACTIVITY_LOGGER_TABLE_NAME": "activity_log",
+        "ACTIVITY_LOGGER_DB_CONNECTION": "null"
+      },
+      "files": [
+        {
+          "source": "activity-log/config/activitylog.php",
+          "target": "config/activitylog.php"
+        },
+        {
+          "source": "activity-log/database/migrations/2025_11_26_231020_create_activity_log_table.php",
+          "target": "database/migrations/2025_11_26_231020_create_activity_log_table.php"
+        },
+        {
+          "source": "activity-log/app/Models/Activity.php",
+          "target": "app/Models/Activity.php"
+        },
+        {
+          "source": "activity-log/app/Listeners/LogUserLogin.php",
+          "target": "app/Listeners/LogUserLogin.php"
+        },
+        {
+          "source": "activity-log/app/Listeners/LogUserLogout.php",
+          "target": "app/Listeners/LogUserLogout.php"
+        },
+        {
+          "source": "activity-log/app/Http/Middleware/AdminActivityLogger.php",
+          "target": "app/Http/Middleware/AdminActivityLogger.php"
+        },
+        {
+          "source": "activity-log/app/Http/Controllers/Admin/ActivityLogController.php",
+          "target": "app/Http/Controllers/Admin/ActivityLogController.php"
+        },
+        {
+          "source": "activity-log/resources/views/admin/activity_logs/all.blade.php",
+          "target": "resources/views/admin/activity_logs/all.blade.php"
+        }
+      ],
+      "append": [
+        {
+          "source": "activity-log/routes/web.php",
+          "target": "routes/web.php",
+          "marker": "Route::prefix('activity_logs')->group"
+        }
+      ]
+    },
+    {
+      "id": "users",
+      "title": "Users Module Feature",
+      "group": "Admin",
+      "description": "Adds an admin Users module with DataTables listing and a reusable user details page.",
+      "files": [
+        {
+          "source": "users/app/Http/Controllers/Admin/UserController.php",
+          "target": "app/Http/Controllers/Admin/UserController.php"
+        },
+        {
+          "source": "users/resources/views/admin/users/all.blade.php",
+          "target": "resources/views/admin/users/all.blade.php"
+        },
+        {
+          "source": "users/resources/views/admin/users/details.blade.php",
+          "target": "resources/views/admin/users/details.blade.php"
+        }
+      ],
+      "append": [
+        {
+          "source": "users/routes/web.php",
+          "target": "routes/web.php",
+          "marker": "Route::prefix('users')->group"
+        }
+      ]
+    },
+    {
+      "id": "api-rate-limit",
+      "title": "API Rate Limit Feature",
+      "group": "Security",
+      "description": "Adds a dedicated API rate-limit middleware with env-controlled per-minute limit and block duration.",
+      "files": [
+        {
+          "source": "api-rate-limit/app/Http/Middleware/ApiRateLimitGuard.php",
+          "target": "app/Http/Middleware/ApiRateLimitGuard.php"
+        }
+      ]
+    },
+    {
+      "id": "payment-gateway",
+      "title": "Payment Gateway Feature",
+      "group": "Payments",
+      "description": "Adds selected payment gateway scaffolding for Razorpay, Easebuzz, or PhonePe with PG/autopay service classes, config, migrations, models, and webhook endpoints."
     },
     {
       "id": "middleware",

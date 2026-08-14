@@ -8,8 +8,8 @@
             </div>
             <div class="nk-header-brand d-xl-none">
                 <a href="{{ route('admin.dashboard') }}" class="logo-link">
-                    <img class="logo-light logo-img" src="{{ asset('assets/admin/images/app-logo.png') }}" alt="logo">
-                    <img class="logo-dark logo-img" src="{{ asset('assets/admin/images/app-logo.png') }}" alt="logo-dark">
+                    <img class="logo-light logo-img" src="{{ $appSetting::getAssetUrl('app_logo', 'assets/admin/images/app-logo.png') }}" alt="logo">
+                    <img class="logo-dark logo-img" src="{{ $appSetting::getAssetUrl('app_logo', 'assets/admin/images/app-logo.png') }}" alt="logo-dark">
                 </a>
             </div>
             <div class="nk-header-news d-none d-xl-block">

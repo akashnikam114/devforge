@@ -41,6 +41,7 @@
                                         <select class="form-select js-select2 @error('default_language') is-invalid @enderror"
                                             name="default_language" id="default_language" data-ui="lg" data-search="on"
                                             data-placeholder="Select Language">
+                                            <option value="" disabled {{ old('default_language', $data->default_language) ? '' : 'selected' }}>Select Language</option>
                                             @foreach ([
                                                 'en' => 'English',
                                                 'hi' => 'Hindi',
@@ -73,6 +74,7 @@
                                         <select class="form-select js-select2 @error('date_format') is-invalid @enderror"
                                             name="date_format" id="date_format" data-ui="lg" data-search="off"
                                             data-placeholder="Select Date Format">
+                                            <option value="" disabled {{ old('date_format', $data->date_format) ? '' : 'selected' }}>Select Date Format</option>
                                             @foreach ([
                                                 'Y-m-d' => now()->format('Y-m-d'),
                                                 'd-m-Y' => now()->format('d-m-Y'),
@@ -102,6 +104,7 @@
                                         <select class="form-select js-select2 @error('time_format') is-invalid @enderror"
                                             name="time_format" id="time_format" data-ui="lg" data-search="off"
                                             data-placeholder="Select Time Format">
+                                            <option value="" disabled {{ old('time_format', $data->time_format) ? '' : 'selected' }}>Select Time Format</option>
                                             @foreach ([
                                                 'H:i' => now()->format('H:i'),
                                                 'h:i A' => now()->format('h:i A'),

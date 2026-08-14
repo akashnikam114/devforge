@@ -1,7 +1,7 @@
 /*!
  * Theme: Egyptian
- * Package: DashLite v3.2.4
- * Updated: 11.01.2024
+ * Package: DashLite v3.3.0
+ * Updated: 05.21.2025
  * Author: Softnio
  * Author URI: http://themeforest.net/user/softnio
 **/
@@ -92,13 +92,12 @@
 .nav-tabs .nav-link:after,
 .progress-bar, .dot-primary,
 .alert-fill.alert-primary,
-.bg-primary,
+.badge-primary,
 .icon-circle,
 .noUi-connect,
-.nk-kycfm-label::after,
-.buysell-pm-label:after,
 .nk-msg-menu-item a:after,
-.ui-shady .nk-msg-item.active:after, .ui-shady .nk-msg-item.current:after {
+.ui-shady .nk-msg-item.active:after, .ui-shady .nk-msg-item.current:after,
+.ui-softy .nk-msg-item.active:after, .ui-softy .nk-msg-item.current:after {
   background: #2263b3;
 }
 
@@ -108,10 +107,6 @@
 
 .card.is-dark {
   background: #022c57;
-}
-
-.is-dark .nk-wg7-title, .is-dark .nk-wg7-note {
-  color: #b2c9e4;
 }
 
 .user-avatar, [class^=user-avatar]:not([class*=-group]) {
@@ -172,15 +167,6 @@
 .form-text-hint,
 .search-submit:hover,
 .nk-news-icon .icon,
-.nk-refwg-name .title,
-.nk-wg1-amount .amount,
-.nk-wgw-add a .title,
-.nk-wgw-actions a:hover span,
-.nk-wgw-actions a:hover .icon,
-.nk-wg4-note span,
-.nk-kycfm-control:checked ~ .nk-kycfm-label .label-icon,
-.wallet-item-add a:hover .wallet-icon,
-.wallet-item-add a:hover .wallet-name,
 .attach-item .icon,
 .attach-download:hover span,
 .nk-reply-meta-info .whom,
@@ -230,7 +216,7 @@ a.bg-primary:hover, a.bg-primary:focus, button.bg-primary:hover, button.bg-prima
   background-color: #1a4b88 !important;
 }
 
-.bg-primary-dim {
+.bg-primary-dim, .dual-listbox .dual-listbox__item:active, .dual-listbox .dual-listbox__item.dual-listbox__item--selected {
   background-color: #e9eff7 !important;
 }
 
@@ -259,6 +245,10 @@ a.bg-primary:hover, a.bg-primary:focus, button.bg-primary:hover, button.bg-prima
 
 .dropdown-menu-s1 {
   border-top-color: #2263b3;
+}
+
+.nk-iv-wg2-amount.ui-v2 {
+  border-bottom-color: #2263b3;
 }
 
 .page-item.active .page-link,
@@ -294,28 +284,12 @@ a.bg-primary:hover, a.bg-primary:focus, button.bg-primary:hover, button.bg-prima
   color: #ffffff;
 }
 
-.icon-avatar, .nk-iv-scheme-icon.is-running {
+.icon-avatar {
   color: #2263b3;
   background-color: #dee8f4;
 }
 
-.is-dark .nk-wgw-icon {
-  background: #4e82c2;
-}
-
-.is-dark .nk-wgw-balance .amount-sm, .is-dark .nk-wgw-actions a .icon, .is-dark .nk-wgw-more .btn-trigger {
-  color: #b2c9e4;
-}
-
-.is-dark .nk-wgw-actions a {
-  color: #b2c9e4;
-}
-
-.is-dark .nk-wgw-actions {
-  border-color: rgba(178, 201, 228, 0.4);
-}
-
-.is-dark .nk-wgw-more .btn-trigger:before, .is-theme .nk-quick-nav-icon:before {
+.is-theme .nk-quick-nav-icon:before {
   background-color: #011325;
 }
 
@@ -476,15 +450,10 @@ a.bg-primary:hover, a.bg-primary:focus, button.bg-primary:hover, button.bg-prima
   border-color: #03407f;
 }
 
-.is-theme .wallet-name, .is-theme .wallet-icon, .is-theme .wallet-balance span, .is-theme .nk-menu-footer .nk-menu-link, .is-theme .sub-text, .is-theme .lead-text span {
+.is-theme .nk-menu-footer .nk-menu-link, .is-theme .sub-text, .is-theme .lead-text span {
   color: #b2c9e4;
 }
 
-@media (min-width: 1200px) {
-  .nk-sidebar.is-theme .nk-menu > li:hover > a, .nk-sidebar.is-theme .nk-menu > li.active > a, .nk-sidebar.is-theme .nk-menu > li.current-menu > a, .nk-sidebar.is-theme .nk-menu > li > a:hover, .is-theme .wallet-item a:before {
-    background: #033b75;
-  }
-}
 .nav-switch-s2 .nav-link:hover, .nav-switch-s2 .nav-link:focus {
   color: #526484;
 }

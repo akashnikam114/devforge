@@ -127,6 +127,10 @@ function printUsage(config) {
   console.log("  --fields LIST    CRUD fields, for example name:string,description:text,is_active:boolean.");
   console.log("  --firebase-project NAME       Firebase project name for Firebase setup.");
   console.log("  --firebase-credentials PATH   Firebase service-account .json file path.");
+  console.log("  --api-limit-per-minute NUMBER API rate limit per minute.");
+  console.log("  --api-block-duration SECONDS  API rate-limit block duration.");
+  console.log("  --payment-provider PROVIDER   Payment provider: easebuzz, razorpay, phonepe.");
+  console.log("  --payment-mode MODE           Payment mode: pg, autopay, both.");
   console.log("  --force          Allow CRUD files for the same module to be overwritten.");
   console.log("");
   console.log(`Generated projects are created inside ${config.defaultOutputDirectory}/.`);
@@ -541,6 +545,21 @@ async function askHexColor(prompt, question, defaultValue) {
 
     console.log("");
     console.log(color.yellow(`Invalid color "${answer}". Please enter a 6-digit hex color like #049C9C.`));
+    console.log("");
+  }
+}
+
+async function askPositiveInteger(prompt, question, defaultValue) {
+  while (true) {
+    const answer = await askQuestion(prompt, question, String(defaultValue));
+    const value = Number(answer);
+
+    if (Number.isInteger(value) && value > 0) {
+      return value;
+    }
+
+    console.log("");
+    console.log(color.yellow(`Invalid number "${answer}". Please enter a positive whole number.`));
     console.log("");
   }
 }
@@ -1181,6 +1200,69 @@ async function collectLaravelFirebaseSetup(prompt, projectName, args = []) {
   }
 }
 
+async function collectLaravelApiRateLimitConfig(prompt, args = []) {
+  const directLimit = getOptionValue(args, "--api-limit-per-minute");
+  const directBlockDuration = getOptionValue(args, "--api-block-duration");
+
+  if (directLimit || directBlockDuration) {
+    const limitPerMinute = Number(directLimit || 60);
+    const blockDurationSeconds = Number(directBlockDuration || 3600);
+
+    if (!Number.isInteger(limitPerMinute) || limitPerMinute <= 0) {
+      fail("--api-limit-per-minute must be a positive whole number.");
+    }
+
+    if (!Number.isInteger(blockDurationSeconds) || blockDurationSeconds <= 0) {
+      fail("--api-block-duration must be a positive whole number.");
+    }
+
+    return {
+      limitPerMinute,
+      blockDurationSeconds
+    };
+  }
+
+  console.log("");
+  console.log(color.bold("API Rate Limit Settings"));
+
+  return {
+    limitPerMinute: await askPositiveInteger(prompt, "Enter API limit per minute", 60),
+    blockDurationSeconds: await askPositiveInteger(prompt, "Enter API block duration in seconds", 3600)
+  };
+}
+
+async function collectLaravelPaymentGatewayConfig(prompt, args = []) {
+  const directProvider = getOptionValue(args, "--payment-provider");
+  const directMode = getOptionValue(args, "--payment-mode");
+  const providers = ["easebuzz", "razorpay", "phonepe"];
+
+  console.log("");
+  console.log(color.bold("Payment Gateway Settings"));
+
+  if (directProvider && !providers.includes(directProvider.toLowerCase())) {
+    fail(`Unsupported payment provider "${directProvider}". Supported providers: ${providers.join(", ")}.`);
+  }
+
+  const provider = directProvider
+    ? directProvider.toLowerCase()
+    : await askChoice(prompt, "Select payment gateway provider", providers, "razorpay");
+
+  const modeChoices = provider === "razorpay" ? ["pg"] : ["autopay", "pg", "both"];
+
+  if (directMode && !modeChoices.includes(directMode.toLowerCase())) {
+    fail(`Unsupported payment mode "${directMode}" for ${provider}. Supported modes: ${modeChoices.join(", ")}.`);
+  }
+
+  const mode = directMode
+    ? directMode.toLowerCase()
+    : await askChoice(prompt, "Select payment gateway mode", modeChoices, modeChoices[0]);
+
+  return {
+    provider,
+    mode
+  };
+}
+
 async function collectLaravelStarterFeatureChoices(projectName, args = []) {
   if (!process.stdin.isTTY) {
     console.log("");
@@ -1216,6 +1298,23 @@ async function collectLaravelStarterFeatureChoices(projectName, args = []) {
     const themeConfig = adminUiTheme
       ? await collectLaravelUiThemeConfig(prompt, projectName)
       : {};
+    const appRelease = commonCore
+      ? false
+      : await askYesNo(prompt, "Add App Release Feature? This creates an admin module for Android/iOS latest versions, force updates, and release notes", "yes");
+    const adminActivityLog = commonCore || adminPanel
+      ? await askYesNo(prompt, "Add Admin Panel Activity Log Feature? This creates activity logs, login/logout event listeners, and admin request logging", "yes")
+      : false;
+    const users = commonCore || adminPanel
+      ? await askYesNo(prompt, "Add Users Module Feature? This creates an admin users list and details page", "yes")
+      : false;
+    const apiRateLimit = await askYesNo(prompt, "Add API Rate Limit Feature? This creates dedicated API rate-limit middleware with env settings", "yes");
+    const apiRateLimitConfig = apiRateLimit
+      ? await collectLaravelApiRateLimitConfig(prompt, args)
+      : null;
+    const paymentGateway = await askYesNo(prompt, "Add Payment Gateway Feature? This creates selected provider service scaffolding, config, migrations, and webhook endpoints", "no");
+    const paymentGatewayConfig = paymentGateway
+      ? await collectLaravelPaymentGatewayConfig(prompt, args)
+      : null;
     const middleware = commonCore
       ? false
       : await askYesNo(prompt, "Add Middleware Feature? This creates secure headers, API logging, sanitization, and maintenance middleware starters", "yes");
@@ -1237,6 +1336,13 @@ async function collectLaravelStarterFeatureChoices(projectName, args = []) {
       adminUiTheme,
       adminAssets,
       commonCore,
+      appRelease,
+      adminActivityLog,
+      users,
+      apiRateLimit,
+      apiRateLimitConfig,
+      paymentGateway,
+      paymentGatewayConfig,
       themeConfig,
       middleware,
       firebase,
@@ -1333,7 +1439,7 @@ function appendUniqueFileContent(filePath, content, marker) {
   let currentContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf8") : "<?php\n";
   let normalizedContent = content.trim().replace(/^<\?php\s*/, "");
 
-  if (filePath.endsWith(path.join("routes", "web.php")) && normalizedContent.includes("Route::")) {
+  if (filePath.includes(`${path.sep}routes${path.sep}`) && normalizedContent.includes("Route::")) {
     const useImports = normalizedContent.match(/^use [^;]+;\s*/gm) || [];
     normalizedContent = normalizedContent.replace(/^use [^;]+;\s*/gm, "").trimStart();
     currentContent = useImports
@@ -1702,6 +1808,18 @@ function applyLaravelFeatureById(projectDirectory, projectName, featureId, datab
     if (updateLaravelApiLogChannel(projectDirectory)) {
       createdItems.push("config/logging.php api_logs channel");
     }
+  } else if (featureId === "api-rate-limit") {
+    const limitConfig = options.apiRateLimitConfig || { limitPerMinute: 60, blockDurationSeconds: 3600 };
+    createdItems = copyLaravelFeatureFiles(projectDirectory, projectName, feature);
+    createdItems.push(...applyLaravelFeatureEnv(projectDirectory, projectName, {
+      env: {
+        API_RATE_LIMIT_PER_MINUTE: String(limitConfig.limitPerMinute),
+        API_RATE_LIMIT_BLOCK_DURATION_SECONDS: String(limitConfig.blockDurationSeconds)
+      }
+    }));
+    if (updateLaravelApiRateLimitMiddleware(projectDirectory)) {
+      createdItems.push("app/Http/Kernel.php API rate limit middleware");
+    }
   } else if (featureId === "firebase") {
     createdItems = [
       ...applyLaravelFirebaseFeature(projectDirectory),
@@ -1713,6 +1831,8 @@ function applyLaravelFeatureById(projectDirectory, projectName, featureId, datab
     createdItems = applyLaravelPdfExportFeature(projectDirectory);
   } else if (featureId === "pwa") {
     createdItems = applyLaravelPwaFeature(projectDirectory, projectName);
+  } else if (featureId === "payment-gateway") {
+    createdItems = applyLaravelPaymentGatewayFeature(projectDirectory, projectName, options);
   } else {
     const result = applyLaravelGenericManifestFeature(projectDirectory, projectName, featureId, options);
     createdItems = result.createdItems;
@@ -1727,6 +1847,28 @@ function applyLaravelFeatureById(projectDirectory, projectName, featureId, datab
 
       if (updateLaravelApiLogChannel(projectDirectory)) {
         createdItems.push("config/logging.php api_logs channel");
+      }
+    }
+
+    if (featureId === "app-release" && insertAppReleaseSidebarLink(projectDirectory)) {
+      createdItems.push("resources/views/admin/layouts/sidebar.blade.php app release link");
+    }
+
+    if (featureId === "users" && insertAdminSidebarLink(projectDirectory, "users", "Users", "ni-users")) {
+      createdItems.push("resources/views/admin/layouts/sidebar.blade.php users link");
+    }
+
+    if (featureId === "admin-activity-log") {
+      if (updateLaravelEventServiceProviderForActivityLog(projectDirectory)) {
+        createdItems.push("app/Providers/EventServiceProvider.php login/logout listeners");
+      }
+
+      if (updateLaravelAdminActivityMiddleware(projectDirectory)) {
+        createdItems.push("app/Http/Kernel.php admin activity middleware alias");
+      }
+
+      if (insertAdminSidebarLink(projectDirectory, "activity_logs", "Activity Logs", "ni-activity")) {
+        createdItems.push("resources/views/admin/layouts/sidebar.blade.php activity logs link");
       }
     }
   }
@@ -1843,6 +1985,118 @@ function insertCrudSidebarLink(projectDirectory, definition) {
   return true;
 }
 
+function insertAppReleaseSidebarLink(projectDirectory) {
+  const sidebarPath = path.join(projectDirectory, "resources", "views", "admin", "layouts", "sidebar.blade.php");
+
+  if (!fs.existsSync(sidebarPath)) {
+    return false;
+  }
+
+  const currentContent = fs.readFileSync(sidebarPath, "utf8");
+
+  if (currentContent.includes("route('admin.app_releases')")) {
+    return false;
+  }
+
+  const link = `                        <li class="nk-menu-item">\n                            <a href="{{ route('admin.app_releases') }}" class="nk-menu-link">\n                                <span class="nk-menu-icon"><em class="icon ni ni-mobile"></em></span>\n                                <span class="nk-menu-text">App Release</span>\n                            </a>\n                        </li>\n`;
+  const marker = "                        <li class=\"nk-menu-item has-sub\">";
+  const markerIndex = currentContent.indexOf(marker);
+  const nextContent = markerIndex === -1
+    ? currentContent.replace(/(\s*<\/ul>)/, `${link}$1`)
+    : `${currentContent.slice(0, markerIndex)}${link}${currentContent.slice(markerIndex)}`;
+
+  writeProjectFile(sidebarPath, nextContent);
+  return true;
+}
+
+function insertAdminSidebarLink(projectDirectory, routeName, label, icon = "ni-list") {
+  const sidebarPath = path.join(projectDirectory, "resources", "views", "admin", "layouts", "sidebar.blade.php");
+
+  if (!fs.existsSync(sidebarPath)) {
+    return false;
+  }
+
+  const currentContent = fs.readFileSync(sidebarPath, "utf8");
+
+  if (currentContent.includes(`route('admin.${routeName}')`)) {
+    return false;
+  }
+
+  const link = `                        <li class="nk-menu-item">\n                            <a href="{{ route('admin.${routeName}') }}" class="nk-menu-link">\n                                <span class="nk-menu-icon"><em class="icon ni ${icon}"></em></span>\n                                <span class="nk-menu-text">${label}</span>\n                            </a>\n                        </li>\n`;
+  const marker = "                        <li class=\"nk-menu-item has-sub\">";
+  const markerIndex = currentContent.indexOf(marker);
+  const nextContent = markerIndex === -1
+    ? currentContent.replace(/(\s*<\/ul>)/, `${link}$1`)
+    : `${currentContent.slice(0, markerIndex)}${link}${currentContent.slice(markerIndex)}`;
+
+  writeProjectFile(sidebarPath, nextContent);
+  return true;
+}
+
+function applyLaravelPaymentGatewayFeature(projectDirectory, projectName, options = {}) {
+  const provider = (options.paymentGatewayConfig?.provider || "razorpay").toLowerCase();
+  const mode = (options.paymentGatewayConfig?.mode || "pg").toLowerCase();
+  const baseFiles = [
+    ["payment-gateway/config/payment-gateway.php", "config/payment-gateway.php"],
+    ["payment-gateway/app/Http/Controllers/Api/V1/PaymentGatewayWebhookController.php", "app/Http/Controllers/Api/V1/PaymentGatewayWebhookController.php"]
+  ];
+  const selectedFiles = [...baseFiles];
+
+  if (provider === "razorpay") {
+    selectedFiles.push(
+      ["payment-gateway/app/Models/RazorpayWebhook.php", "app/Models/RazorpayWebhook.php"],
+      ["payment-gateway/database/migrations/2025_12_27_220313_create_razorpay_webhooks_table.php", "database/migrations/2025_12_27_220313_create_razorpay_webhooks_table.php"]
+    );
+  }
+
+  if (mode === "pg" || mode === "both") {
+    const classPrefix = provider === "phonepe" ? "PhonePe" : toStudlyCase(provider);
+    const folder = provider === "phonepe" ? "PhonePe" : classPrefix;
+    selectedFiles.push([
+      `payment-gateway/app/Services/${folder}/${classPrefix}PGService.php`,
+      `app/Services/${folder}/${classPrefix}PGService.php`
+    ]);
+  }
+
+  if (mode === "autopay" || mode === "both") {
+    const classPrefix = provider === "phonepe" ? "PhonePe" : toStudlyCase(provider);
+    const folder = provider === "phonepe" ? "PhonePe" : classPrefix;
+    selectedFiles.push([
+      `payment-gateway/app/Services/${folder}/${classPrefix}AutopayService.php`,
+      `app/Services/${folder}/${classPrefix}AutopayService.php`
+    ]);
+  }
+
+  selectedFiles.forEach(([source, target]) => {
+    writeProjectFile(path.join(projectDirectory, target), readLaravelFeatureFile(source, projectName));
+  });
+
+  appendUniqueFileContent(
+    path.join(projectDirectory, "routes", "api", "v1", "api.php"),
+    readLaravelFeatureFile("payment-gateway/routes/api/v1/api.php", projectName),
+    "Route::prefix('payment-gateways')->group"
+  );
+
+  applyLaravelFeatureEnv(projectDirectory, projectName, {
+    env: {
+      PAYMENT_GATEWAY_PROVIDER: provider,
+      PAYMENT_GATEWAY_MODE: mode,
+      RAZORPAY_KEY: "",
+      RAZORPAY_SECRET: "",
+      RAZORPAY_WEBHOOK_SECRET: "",
+      EASEBUZZ_KEY: "",
+      EASEBUZZ_SALT: "",
+      EASEBUZZ_ENV: "test",
+      PHONEPE_MERCHANT_ID: "",
+      PHONEPE_SALT_KEY: "",
+      PHONEPE_SALT_INDEX: "",
+      PHONEPE_ENV: "test"
+    }
+  });
+
+  return [...selectedFiles.map(([, target]) => target), "routes/api/v1/api.php", ".env", ".env.example"];
+}
+
 function applyLaravelCrudModule(projectDirectory, definition, options = {}) {
   const force = Boolean(options.force);
   const statusPieces = renderCrudStatusPieces(definition);
@@ -1934,6 +2188,11 @@ function applyLaravelStarterFeatures(projectDirectory, projectName, choices) {
   if (choices.adminUiTheme) selectedFeatureIds.push("admin-ui-theme");
   if (choices.adminAssets) selectedFeatureIds.push("admin-assets");
   if (choices.commonCore) selectedFeatureIds.push("common-core");
+  if (choices.appRelease && !choices.commonCore) selectedFeatureIds.push("app-release");
+  if (choices.adminActivityLog) selectedFeatureIds.push("admin-activity-log");
+  if (choices.users) selectedFeatureIds.push("users");
+  if (choices.apiRateLimit) selectedFeatureIds.push("api-rate-limit");
+  if (choices.paymentGateway) selectedFeatureIds.push("payment-gateway");
   if (choices.middleware) selectedFeatureIds.push("middleware");
   if (choices.firebase) selectedFeatureIds.push("firebase");
   if (choices.excelExport) selectedFeatureIds.push("excel-export");
@@ -1944,7 +2203,9 @@ function applyLaravelStarterFeatures(projectDirectory, projectName, choices) {
     const result = applyLaravelFeatureById(projectDirectory, projectName, featureId, null, {
       themeConfig: choices.themeConfig || {},
       timezone: choices.timezone || "UTC",
-      firebaseSetup: choices.firebaseSetup || null
+      firebaseSetup: choices.firebaseSetup || null,
+      apiRateLimitConfig: choices.apiRateLimitConfig || null,
+      paymentGatewayConfig: choices.paymentGatewayConfig || null
     });
     composerUpdated = composerUpdated || result.composerUpdated;
     createdItems.push(...result.createdItems);
@@ -2095,6 +2356,76 @@ function updateLaravelKernelMiddleware(projectDirectory) {
         }
       }
     });
+
+    return nextContent;
+  });
+}
+
+function updateLaravelApiRateLimitMiddleware(projectDirectory) {
+  const kernelPath = path.join(projectDirectory, "app", "Http", "Kernel.php");
+
+  return replaceFileContent(kernelPath, (content) => {
+    let nextContent = content;
+    const middleware = "\\App\\Http\\Middleware\\ApiRateLimitGuard::class";
+
+    if (!nextContent.includes(middleware)) {
+      nextContent = nextContent.replace(
+        /('api'\s*=>\s*\[[\s\S]*?\\Illuminate\\Routing\\Middleware\\SubstituteBindings::class,)/,
+        `$1\n            ${middleware},`
+      );
+    }
+
+    return nextContent;
+  });
+}
+
+function updateLaravelAdminActivityMiddleware(projectDirectory) {
+  const kernelPath = path.join(projectDirectory, "app", "Http", "Kernel.php");
+
+  return replaceFileContent(kernelPath, (content) => {
+    const middlewareAlias = "'admin.activity' => \\App\\Http\\Middleware\\AdminActivityLogger::class";
+
+    if (content.includes(middlewareAlias)) {
+      return content;
+    }
+
+    const aliasPattern = /(protected \$middlewareAliases\s*=\s*\[[\s\S]*?'verified'\s*=>\s*\\Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified::class,)/;
+    const routeMiddlewarePattern = /(protected \$routeMiddleware\s*=\s*\[[\s\S]*?'verified'\s*=>\s*\\Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified::class,)/;
+
+    if (aliasPattern.test(content)) {
+      return content.replace(aliasPattern, `$1\n        ${middlewareAlias},`);
+    }
+
+    return content.replace(routeMiddlewarePattern, `$1\n        ${middlewareAlias},`);
+  });
+}
+
+function updateLaravelEventServiceProviderForActivityLog(projectDirectory) {
+  const providerPath = path.join(projectDirectory, "app", "Providers", "EventServiceProvider.php");
+
+  return replaceFileContent(providerPath, (content) => {
+    let nextContent = content;
+
+    [
+      "Illuminate\\Auth\\Events\\Login",
+      "Illuminate\\Auth\\Events\\Logout"
+    ].forEach((importClass) => {
+      nextContent = ensurePhpUseImport(nextContent, importClass);
+    });
+
+    if (!nextContent.includes("Login::class => [")) {
+      nextContent = nextContent.replace(
+        /(Registered::class\s*=>\s*\[[\s\S]*?\],)/,
+        `$1\n        Login::class => [\n            \\App\\Listeners\\LogUserLogin::class,\n        ],`
+      );
+    }
+
+    if (!nextContent.includes("Logout::class => [")) {
+      nextContent = nextContent.replace(
+        /(Login::class\s*=>\s*\[[\s\S]*?\],)/,
+        `$1\n        Logout::class => [\n            \\App\\Listeners\\LogUserLogout::class,\n        ],`
+      );
+    }
 
     return nextContent;
   });
@@ -2612,6 +2943,42 @@ async function addLaravelFeatureCommand(args) {
 
         try {
           featureOptions.firebaseSetup = await collectLaravelFirebaseSetup(prompt, projectName, args);
+        } finally {
+          prompt.close();
+        }
+      }
+    }
+
+    if (featureId === "api-rate-limit") {
+      if (getOptionValue(args, "--api-limit-per-minute") || getOptionValue(args, "--api-block-duration")) {
+        featureOptions.apiRateLimitConfig = await collectLaravelApiRateLimitConfig(null, args);
+      } else if (!process.stdin.isTTY) {
+        featureOptions.apiRateLimitConfig = {
+          limitPerMinute: 60,
+          blockDurationSeconds: 3600
+        };
+      } else {
+        const prompt = createPrompt();
+
+        try {
+          featureOptions.apiRateLimitConfig = await collectLaravelApiRateLimitConfig(prompt, args);
+        } finally {
+          prompt.close();
+        }
+      }
+    }
+
+    if (featureId === "payment-gateway") {
+      if (!process.stdin.isTTY && !getOptionValue(args, "--payment-provider")) {
+        featureOptions.paymentGatewayConfig = {
+          provider: "razorpay",
+          mode: "pg"
+        };
+      } else {
+        const prompt = createPrompt();
+
+        try {
+          featureOptions.paymentGatewayConfig = await collectLaravelPaymentGatewayConfig(prompt, args);
         } finally {
           prompt.close();
         }

@@ -19,7 +19,35 @@
                         @csrf
                         <div class="row g-4">
                             @foreach ($data as $business)
-                                @if(!in_array($business->value, ["true", "false"]) && strlen($business->value) <= 64 && !in_array($business->key, ['privacy_policy', 'terms_and_conditions']))
+                                @if($business->key === 'app_logo')
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label class="form-label" for="{{ $business->key }}">
+                                                {{ ucwords(str_replace('_', ' ', $business->key)) }}
+                                            </label>
+                                            <div class="form-control-wrap">
+                                                <input type="file"
+                                                    class="form-control form-control-lg @error($business->key) is-invalid @enderror"
+                                                    name="{{ $business->key }}" id="{{ $business->key }}"
+                                                    accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml">
+                                                @error($business->key)
+                                                    <span class="invalid-feedback">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-control-wrap mt-3">
+                                                <img id="app-logo-preview"
+                                                    src="{{ $appSetting::getAssetUrl('app_logo', 'assets/admin/images/app-logo.png') }}"
+                                                    alt="App Logo Preview" style="max-width: 100%; max-height: 60px;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+
+                            @foreach ($data as $business)
+                                @if(!in_array($business->value, ["true", "false"]) && strlen($business->value) <= 64 && !in_array($business->key, ['app_logo', 'privacy_policy', 'terms_and_conditions']))
                                     @php
                                         $selectOptions = [
                                             'currency_symbol' => [
@@ -48,6 +76,7 @@
                                                     <select class="form-select js-select2 @error($business->key) is-invalid @enderror"
                                                         name="{{ $business->key }}" id="{{ $business->key }}" data-ui="lg"
                                                         data-search="off" data-placeholder="Select {{ ucwords(str_replace('_', ' ', $business->key)) }}">
+                                                        <option value="" disabled {{ old($business->key, $business->value) ? '' : 'selected' }}>Select {{ ucwords(str_replace('_', ' ', $business->key)) }}</option>
                                                         @foreach ($selectOptions[$business->key] as $value => $label)
                                                             <option value="{{ $value }}" {{ old($business->key, $business->value) === $value ? 'selected' : '' }}>
                                                                 {{ $label }}
@@ -78,7 +107,7 @@
                                     $isLongText = strlen($business->value) > 64;
                                 @endphp
 
-                                @if(!in_array($business->value, ["true", "false"]) && ($isRichText || $isLongText))
+                                @if($business->key !== 'app_logo' && !in_array($business->value, ["true", "false"]) && ($isRichText || $isLongText))
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-label" for="{{ $business->key }}">
@@ -151,4 +180,21 @@
 @endsection
 @section('scriptJs')
     <script src="{{ asset('assets/admin/js/quill-handler.js') }}"></script>
+    <script>
+        const appLogoInput = document.getElementById('app_logo');
+        if (appLogoInput) {
+            appLogoInput.addEventListener('change', function(event) {
+                const input = event.target;
+                const preview = document.getElementById('app-logo-preview');
+
+                if (preview && input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.setAttribute('src', e.target.result);
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            });
+        }
+    </script>
 @endsection

@@ -41,6 +41,11 @@
         .login-gradient {
             background: linear-gradient(135deg, {{ config('app-ui.primary_color', '#049C9C') }} 0%, {{ config('app-ui.secondary_color', '#037a7a') }} 100%);
         }
+
+        .login-visual-card {
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.16);
+        }
     </style>
 </head>
 <body class="bg-white">
@@ -49,7 +54,7 @@
             <div class="w-full max-w-sm">
                 <div class="mb-10 text-center lg:text-left">
                     <div class="mb-6 flex justify-center lg:justify-start">
-                        <img src="{{ asset('assets/admin/images/app-logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} Logo" class="h-14 w-auto">
+                        <img src="{{ $appSetting::getAssetUrl('app_logo', 'assets/admin/images/app-logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} Logo" class="h-14 w-auto">
                     </div>
                     <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome Back</h2>
                     <p class="mt-2 text-gray-500 font-medium">Please enter your admin credentials to securely access the management panel.</p>
@@ -114,19 +119,19 @@
             </div>
         </div>
 
-        <div class="hidden lg:flex w-[55%] login-gradient relative items-center justify-center overflow-hidden">
+        <div class="hidden lg:flex w-[55%] login-gradient relative items-center justify-center overflow-hidden px-10 xl:px-16">
             <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-32 -mt-32"></div>
             <div class="absolute bottom-0 left-0 w-80 h-80 bg-black/5 rounded-full -ml-20 -mb-20"></div>
 
-            <div class="relative z-10 text-center px-12 xl:px-24">
-                <div class="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-3xl bg-white/15 shadow-2xl shadow-black/10 ring-1 ring-white/20">
-                    <img src="{{ asset('assets/admin/images/app-logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} Logo" class="h-14 w-14">
+            <div class="relative z-10 w-full max-w-3xl text-center">
+                <div class="login-visual-card rounded-2xl bg-white/15 p-5 xl:p-6 ring-1 ring-white/20 backdrop-blur-sm">
+                    <img src="{{ asset('assets/admin/images/admin-login-illustration.png') }}" alt="Admin dashboard illustration" class="mx-auto w-full max-w-2xl rounded-xl">
                 </div>
 
-                <div class="max-w-md mx-auto text-white">
+                <div class="max-w-xl mx-auto mt-8 text-white">
                     <h2 class="text-3xl font-extrabold mb-3">Welcome to {{ $appSetting::getBusinessInfo('app_name') }}!</h2>
-                    <h4 class="text-md font-extrabold mb-3">{{ config('app-ui.panel_title', 'Admin Panel') }}</h4>
-                    <p class="text-white/80 text-sm md:text-base font-medium leading-relaxed">
+                    <h4 class="text-md font-extrabold mb-3 text-white/85">{{ config('app-ui.panel_title', 'Admin Panel') }}</h4>
+                    <p class="text-white/72 text-sm md:text-base font-medium leading-relaxed">
                         {{ config('app-ui.panel_description', 'Securely manage users, settings, content, and application operations from one dashboard.') }}
                     </p>
                 </div>

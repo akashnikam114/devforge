@@ -30,7 +30,7 @@ class CreateBusinessSettingsTable extends Migration
             ],
             [
                 'key' => 'app_logo',
-                'value' => 'app-logo.png',
+                'value' => 'assets/admin/images/app-logo.png',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

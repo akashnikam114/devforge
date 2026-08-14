@@ -83,6 +83,11 @@ Current feature ids:
 - `admin-ui-theme`
 - `admin-assets`
 - `common-core`
+- `app-release`
+- `admin-activity-log`
+- `users`
+- `api-rate-limit`
+- `payment-gateway`
 - `middleware`
 - `firebase`
 - `excel-export`
@@ -92,10 +97,12 @@ Current feature ids:
 `common-core` is the completed reusable admin starter pack. It contains:
 
 - admin auth and dashboard
-- DashLite-compatible admin assets under `public/assets/admin`
+- DashLite demo1 CSS, JavaScript, and fonts under `public/assets/admin`
 - generic admin images under `public/assets/admin/images`: sidebar-ready `app-logo.png`, `default-image.png`, and `favicons/favicon.ico`
+- DashLite-native sidebar spacing/hover behavior and DataTables' native processing loader
+- Business Settings app logo upload with preview
 - PWA icon under `public/pwa/app-icon.png`
-- BusinessSetting, GeneralSetting, restriction settings, banners, and push notification modules
+- BusinessSetting, GeneralSetting, AppRelease, restriction settings, banners, and push notification modules
 - helpers: `BusinessSettingHelper`, `GeneralHelper`, `EncryptionHelper`
 - Firebase service module
 - admin/common models, services, controllers, migrations, views, routes, and middleware
@@ -107,6 +114,14 @@ Current feature ids:
 Admin UI setup applies the selected theme color to buttons, header/profile bar states, dropdown actions, form focus states, sidebar menu states, pagination, badges, dashboard card accents, and Select2 focus/highlight states. General Settings uses Select2 for language, date format, and time format. Business Settings uses Select2 for currency and OTP provider, while sensitive values such as `encryption_key` remain stored but are not shown in the admin panel.
 
 `RequestResponseAdapter` converts incoming request keys from `camelCase` to `snake_case` before controller processing and converts JSON response keys from `snake_case` back to `camelCase`.
+
+`admin-activity-log` adds Spatie Activitylog config, an `activity_log` migration, login/logout listeners, admin request logging middleware, routes, sidebar link, and Activity Logs UI.
+
+`api-rate-limit` adds `ApiRateLimitGuard` with `API_RATE_LIMIT_PER_MINUTE` and `API_RATE_LIMIT_BLOCK_DURATION_SECONDS` environment settings.
+
+`users` adds an admin users listing and details page for DevForge's default users table.
+
+`payment-gateway` adds selected provider scaffolding for Razorpay, Easebuzz, or PhonePe. Razorpay supports PG only; Easebuzz and PhonePe support PG, autopay, or both.
 
 Middleware setup registers secure headers globally, keeps API request normalization/logging/sanitization in the API middleware group, and registers `api.auth`, `app.maintenance`, and `admin.maintenance` aliases. `AppServiceProvider` shares the common `appSetting` helper with all Blade views.
 

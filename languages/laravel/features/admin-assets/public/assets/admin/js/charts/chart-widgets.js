@@ -491,9 +491,6 @@
               enabled: true,
               rtl: NioApp.State.isRTL,
               callbacks: {
-                title: function title() {
-                  return false;
-                },
                 label: function label(context) {
                   return "".concat(context.parsed.y, " ").concat(_get_data.dataUnit);
                 }

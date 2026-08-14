@@ -2,8 +2,8 @@
     <div class="nk-sidebar-element nk-sidebar-head">
         <div class="nk-sidebar-brand">
             <a href="{{ route('admin.dashboard') }}" class="logo-link nk-sidebar-logo">
-                <img class="logo-light logo-img" src="{{ asset('assets/admin/images/app-logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} logo">
-                <img class="logo-dark logo-img" src="{{ asset('assets/admin/images/app-logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} logo">
+                <img class="logo-light logo-img" src="{{ $appSetting::getAssetUrl('app_logo', 'assets/admin/images/app-logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} logo">
+                <img class="logo-dark logo-img" src="{{ $appSetting::getAssetUrl('app_logo', 'assets/admin/images/app-logo.png') }}" alt="{{ $appSetting::getBusinessInfo('app_name') }} logo">
             </a>
         </div>
         <div class="nk-menu-trigger me-n2">
@@ -26,11 +26,45 @@
                                 <span class="nk-menu-text">Dashboard</span>
                             </a>
                         </li>
-                        <li class="nk-menu-item">
-                            <a href="{{ route('admin.banners') }}" class="nk-menu-link">
-                                <span class="nk-menu-icon"><em class="icon ni ni-img"></em></span>
-                                <span class="nk-menu-text">Banner</span>
+                        @if(\Illuminate\Support\Facades\Route::has('admin.users'))
+                            <li class="nk-menu-item">
+                                <a href="{{ route('admin.users') }}" class="nk-menu-link">
+                                    <span class="nk-menu-icon"><em class="icon ni ni-users"></em></span>
+                                    <span class="nk-menu-text">Users</span>
+                                </a>
+                            </li>
+                        @endif
+                        @if(\Illuminate\Support\Facades\Route::has('admin.activity_logs'))
+                            <li class="nk-menu-item">
+                                <a href="{{ route('admin.activity_logs') }}" class="nk-menu-link">
+                                    <span class="nk-menu-icon"><em class="icon ni ni-activity"></em></span>
+                                    <span class="nk-menu-text">Activity Logs</span>
+                                </a>
+                            </li>
+                        @endif
+                        <li class="nk-menu-item has-sub">
+                            <a href="#" class="nk-menu-link nk-menu-toggle">
+                                <span class="nk-menu-icon"><em class="icon ni ni-layers"></em></span>
+                                <span class="nk-menu-text">Content Hub</span>
                             </a>
+                            <ul class="nk-menu-sub">
+                                @if(\Illuminate\Support\Facades\Route::has('admin.banners'))
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('admin.banners') }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-img"></em></span>
+                                            <span class="nk-menu-text">Banner</span>
+                                        </a>
+                                    </li>
+                                @endif
+                                @if(\Illuminate\Support\Facades\Route::has('admin.app_releases'))
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('admin.app_releases') }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-mobile"></em></span>
+                                            <span class="nk-menu-text">App Release</span>
+                                        </a>
+                                    </li>
+                                @endif
+                            </ul>
                         </li>
                         <li class="nk-menu-item has-sub">
                             <a href="#" class="nk-menu-link nk-menu-toggle">
@@ -38,12 +72,14 @@
                                 <span class="nk-menu-text">Notification Center</span>
                             </a>
                             <ul class="nk-menu-sub">
-                                <li class="nk-menu-item">
-                                    <a href="{{ route('admin.notification') }}" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-bell"></em></span>
-                                        <span class="nk-menu-text">Push Notification</span>
-                                    </a>
-                                </li>
+                                @if(\Illuminate\Support\Facades\Route::has('admin.notification'))
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('admin.notification') }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-bell"></em></span>
+                                            <span class="nk-menu-text">Push Notification</span>
+                                        </a>
+                                    </li>
+                                @endif
                             </ul>
                         </li>
                         <li class="nk-menu-item has-sub">

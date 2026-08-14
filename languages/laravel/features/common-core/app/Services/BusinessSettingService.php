@@ -45,4 +45,9 @@ class BusinessSettingService
 
         return true;
     }
+
+    public function getValue(string $key)
+    {
+        return $this->model->where('key', $key)->value('value');
+    }
 }

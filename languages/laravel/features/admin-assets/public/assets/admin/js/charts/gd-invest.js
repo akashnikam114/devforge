@@ -8,7 +8,7 @@
     dataUnit: 'People',
     datasets: [{
       label: "Join",
-      color: "#6baafe",
+      color: "#9cabff",
       data: [110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95, 75, 90, 75, 90]
     }]
   };
@@ -197,8 +197,8 @@
     lineTension: 0.15,
     datasets: [{
       label: "Total Received",
-      color: "#3a8dfe",
-      background: NioApp.hexRGB('#3a8dfe', .3),
+      color: "#798bff",
+      background: NioApp.hexRGB('#798bff', .3),
       data: [111, 80, 125, 75, 95, 75, 90, 111, 80, 125, 75, 95, 75, 90, 111, 80, 125, 75, 95, 75, 90, 111, 80, 125, 75, 95, 75, 90, 75, 90]
     }]
   };
@@ -292,7 +292,8 @@
     stacked: true,
     datasets: [{
       label: "Active User",
-      color: [NioApp.hexRGB("#0971fe", .2), NioApp.hexRGB("#0971fe", .2), NioApp.hexRGB("#0971fe", .2), NioApp.hexRGB("#0971fe", .2), NioApp.hexRGB("#0971fe", .2), NioApp.hexRGB("#0971fe", .2), "#0971fe"],
+      color: [NioApp.hexRGB("#6576ff", .2), NioApp.hexRGB("#6576ff", .2), NioApp.hexRGB("#6576ff", .2), NioApp.hexRGB("#6576ff", .2), NioApp.hexRGB("#6576ff", .2), NioApp.hexRGB("#6576ff", .2), "#6576ff"],
+      // @v2.0
       data: [7200, 8200, 7800, 9500, 5500, 9200, 9690]
     }]
   };
@@ -303,6 +304,7 @@
     datasets: [{
       label: "Active User",
       color: [NioApp.hexRGB("#816bff", .2), NioApp.hexRGB("#816bff", .2), NioApp.hexRGB("#816bff", .2), NioApp.hexRGB("#816bff", .2), NioApp.hexRGB("#816bff", .2), NioApp.hexRGB("#816bff", .2), "#816bff"],
+      // @v2.0
       data: [7200, 8200, 7800, 9500, 5500, 9200, 9690]
     }]
   };
@@ -313,6 +315,7 @@
     datasets: [{
       label: "Active User",
       color: [NioApp.hexRGB("#559bfb", .2), NioApp.hexRGB("#559bfb", .2), NioApp.hexRGB("#559bfb", .2), NioApp.hexRGB("#559bfb", .2), NioApp.hexRGB("#559bfb", .2), NioApp.hexRGB("#559bfb", .2), "#559bfb"],
+      // @v2.0
       data: [6000, 8200, 7800, 9500, 5500, 9200, 9690]
     }]
   };
@@ -349,7 +352,6 @@
           plugins: {
             legend: {
               display: _get_data.legend ? _get_data.legend : false,
-              rtl: NioApp.State.isRTL,
               labels: {
                 boxWidth: 30,
                 padding: 20,
@@ -412,8 +414,10 @@
     stacked: true,
     datasets: [{
       label: "Active User",
-      color: NioApp.hexRGB("#0971fe", .3),
-      colorHover: "#0971fe",
+      color: NioApp.hexRGB("#6576ff", .2),
+      //@v2.0
+      colorHover: "#6576ff",
+      //@v2.0
       data: [6000, 8200, 7800, 9500, 5500, 9200, 9690, 6000, 8200, 7800, 9500, 5500, 9200, 9690, 6000, 8200, 7800, 9500, 5500, 9200, 9690]
     }]
   };
@@ -451,7 +455,6 @@
           plugins: {
             legend: {
               display: _get_data.legend ? _get_data.legend : false,
-              rtl: NioApp.State.isRTL,
               labels: {
                 boxWidth: 30,
                 padding: 20,
@@ -514,11 +517,11 @@
     stacked: true,
     datasets: [{
       label: "Direct Join",
-      color: "#6baafe",
+      color: "#9cabff",
       data: [110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95, 75, 90]
     }, {
       label: "Referral Join",
-      color: "#ccd4ff",
+      color: NioApp.hexRGB("#9cabff", .4),
       data: [125, 55, 95, 75, 90, 110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95, 75, 90, 75, 90]
     }]
   };
@@ -555,7 +558,6 @@
           plugins: {
             legend: {
               display: _get_data.legend ? _get_data.legend : false,
-              rtl: NioApp.State.isRTL,
               labels: {
                 boxWidth: 30,
                 padding: 20,

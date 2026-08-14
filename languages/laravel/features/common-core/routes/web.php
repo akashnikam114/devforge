@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\AppReleaseController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\BusinessSettingController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -46,6 +47,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('delete/{id}', [PushNotificationController::class, 'destroy']);
             Route::post('send/{id}', [PushNotificationController::class, 'sendPushNotification']);
             Route::post('change-status', [PushNotificationController::class, 'changeStatus']);
+        });
+
+        Route::prefix('app_releases')->group(function () {
+            Route::get('all', [AppReleaseController::class, 'index'])->name('app_releases');
+            Route::get('add', [AppReleaseController::class, 'create']);
+            Route::post('add', [AppReleaseController::class, 'store']);
+            Route::get('edit/{id}', [AppReleaseController::class, 'edit']);
+            Route::post('edit/{id}', [AppReleaseController::class, 'update']);
+            Route::delete('delete/{id}', [AppReleaseController::class, 'destroy']);
         });
 
         Route::prefix('restriction_settings')->group(function () {

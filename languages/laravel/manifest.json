@@ -35,7 +35,8 @@
       "tymon/jwt-auth:^2.0",
       "yajra/laravel-datatables-oracle:^10.0",
       "barryvdh/laravel-dompdf:^2.0",
-      "guzzlehttp/guzzle:^7.2"
+      "guzzlehttp/guzzle:^7.2",
+      "spatie/laravel-activitylog:^4.10"
     ],
     "setupCommands": [
       [

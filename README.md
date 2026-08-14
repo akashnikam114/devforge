@@ -138,6 +138,8 @@ devforge feature PROJECT_NAME --feature FEATURE_ID
 devforge crud PROJECT_NAME MODULE_NAME
 devforge crud PROJECT_NAME MODULE_NAME --fields name:string,description:text,is_active:boolean
 devforge feature PROJECT_NAME --feature firebase --firebase-project PROJECT --firebase-credentials /path/to/service-account.json
+devforge feature PROJECT_NAME --feature api-rate-limit --api-limit-per-minute 60 --api-block-duration 3600
+devforge feature PROJECT_NAME --feature payment-gateway --payment-provider razorpay --payment-mode pg
 ```
 
 For Laravel, DevForge checks PHP and Composer before running Composer commands. It then asks for database settings one by one, validates the actual database connection, creates a Laravel 10 project, installs the configured Laravel packages, publishes package config files, creates the storage link, and clears framework caches.
@@ -154,6 +156,15 @@ Add Admin Auth Feature? [yes/no]
 Add Admin UI Theme Feature? [yes/no]
 Add Admin Assets Feature? [yes/no]
 Add Common Core Modules Feature? [yes/no]
+Add App Release Feature? [yes/no] (asked when Common Core is not selected)
+Add Admin Panel Activity Log Feature? [yes/no]
+Add Users Module Feature? [yes/no]
+Add API Rate Limit Feature? [yes/no]
+Enter API limit per minute
+Enter API block duration in seconds
+Add Payment Gateway Feature? [yes/no]
+Select payment gateway provider [easebuzz/razorpay/phonepe]
+Select payment gateway mode [autopay/pg/both]
 Add Middleware Feature? [yes/no]
 Add Firebase Feature? [yes/no]
 Add Excel Export Feature? [yes/no]
@@ -181,7 +192,15 @@ API request logging uses the `api_logs` daily log channel in `config/logging.php
 
 The Excel setup creates `app/Exports/SampleExport.php` for `maatwebsite/excel` when the Excel Export Feature is selected.
 
-The Common Core Modules Feature is the full reusable admin starter pack. It adds admin auth, dashboard/layout views, admin assets, BusinessSetting, GeneralSetting, restriction settings, banners, push notifications, helpers, encryption helper, Firebase service, models, services, migrations, middleware, storage folders, and routes. Admin images live under `public/assets/admin/images` and include a sidebar-ready `app-logo.png`, `default-image.png`, and `favicons/favicon.ico`; PWA uses `public/pwa/app-icon.png`. When UI theme setup is selected, DevForge asks for app name, primary color, secondary color, panel title, and panel description, then writes `APP_UI_*` values to `.env`, `.env.example`, and `config/app-ui.php`.
+The Common Core Modules Feature is the full reusable admin starter pack. It adds admin auth, dashboard/layout views, admin assets, BusinessSetting, GeneralSetting, AppRelease, restriction settings, banners, push notifications, helpers, encryption helper, Firebase service, models, services, migrations, middleware, storage folders, and routes. Admin CSS, JavaScript, and fonts are bundled from the DashLite demo1 theme and copied to `public/assets/admin`; admin images live under `public/assets/admin/images` and include a sidebar-ready `app-logo.png`, `default-image.png`, and `favicons/favicon.ico`; PWA uses `public/pwa/app-icon.png`. The admin shell keeps DashLite sidebar spacing/hover behavior, uses DataTables' native processing loader, and lets Business Settings upload an app logo for generated projects. When UI theme setup is selected, DevForge asks for app name, primary color, secondary color, panel title, and panel description, then writes `APP_UI_*` values to `.env`, `.env.example`, and `config/app-ui.php`.
+
+The Admin Panel Activity Log Feature adds Spatie Activitylog setup, login/logout listeners, admin request activity middleware, an `activity_log` table, and an Activity Logs admin page.
+
+The API Rate Limit Feature adds `ApiRateLimitGuard` as a separate API middleware. It writes `API_RATE_LIMIT_PER_MINUTE` and `API_RATE_LIMIT_BLOCK_DURATION_SECONDS` to `.env` and `.env.example`.
+
+The Users Module Feature adds an admin users listing and details page based on DevForge's default `users` table.
+
+The Payment Gateway Feature supports `easebuzz`, `razorpay`, and `phonepe`. Easebuzz and PhonePe can generate `autopay`, `pg`, or `both` services. Razorpay generates PG scaffolding only and includes `razorpay_webhooks` storage plus webhook endpoints.
 
 Admin UI setup applies the selected theme color to buttons, header/profile bar states, dropdown actions, form focus states, sidebar menu states, pagination, badges, dashboard card accents, and Select2 focus/highlight states. General Settings uses Select2 for language, date format, and time format. Business Settings uses Select2 for currency and OTP provider, while sensitive values such as `encryption_key` remain stored but are not shown in the admin panel.
 

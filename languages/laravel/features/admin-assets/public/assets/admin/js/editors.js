@@ -35,45 +35,50 @@
     if ($(_tinymce_basic).exists()) {
       tinymce.init({
         selector: _tinymce_basic,
-        content_css: true,
+        license_key: 'gpl',
+        content_css: NioApp.isDark ? 'dark' : 'default',
         skin: false,
-        promotion: false,
-        branding: false
+        branding: false,
+        promotion: false
       });
     }
     var _tinymce_menubar = '.tinymce-menubar';
     if ($(_tinymce_menubar).exists()) {
       tinymce.init({
         selector: _tinymce_menubar,
-        content_css: true,
+        license_key: 'gpl',
+        content_css: NioApp.isDark ? 'dark' : 'default',
         skin: false,
         branding: false,
-        promotion: false,
-        toolbar: false
+        toolbar: false,
+        promotion: false
       });
     }
     var _tinymce_toolbar = '.tinymce-toolbar';
     if ($(_tinymce_toolbar).exists()) {
       tinymce.init({
         selector: _tinymce_toolbar,
-        content_css: true,
+        license_key: 'gpl',
+        content_css: NioApp.isDark ? 'dark' : 'default',
         skin: false,
         branding: false,
-        promotion: false,
-        menubar: false
+        menubar: false,
+        promotion: false
       });
     }
     var _tinymce_inline = '.tinymce-inline';
     if ($(_tinymce_inline).exists()) {
       tinymce.init({
         selector: _tinymce_inline,
+        license_key: 'gpl',
         content_css: false,
         skin: false,
         branding: false,
         menubar: false,
         inline: true,
         promotion: false,
-        toolbar: ['undo redo | bold italic underline | fontselect fontsizeselect', 'forecolor backcolor | alignleft aligncenter alignright alignfull | numlist bullist outdent indent']
+        plugins: 'lists',
+        toolbar: ['undo redo | bold italic underline | fontfamily | fontsize', 'forecolor backcolor | alignleft aligncenter alignright alignfull | numlist bullist outdent indent']
       });
     }
   };

@@ -21,7 +21,7 @@
     hideau_profile = 'chat-profile-autohide',
     hide_aside = 'hide-aside',
     show_chat = 'show-chat',
-    info_break = $body.hasClass('has-sidebar') && $chat_body.parent('.nk-chat').hasClass('nk-chat-boxed') ? 9999 : breaks.xxl,
+    info_break = $body.hasClass('has-apps-sidebar') ? 1200 : breaks.xxl,
     flat_break = breaks.lg;
   NioApp.Chats = function () {
     function chat_autohide() {

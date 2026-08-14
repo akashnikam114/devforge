@@ -25,8 +25,29 @@
         }
 
         .btn-primary {
+            color: #ffffff !important;
             background-color: var(--app-primary) !important;
             border-color: var(--app-primary) !important;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus,
+        .btn-primary:active,
+        .btn-primary.active,
+        .show > .btn-primary.dropdown-toggle,
+        a.btn-primary:hover,
+        a.btn-primary:focus,
+        a.btn-primary:active {
+            color: #ffffff !important;
+            background-color: var(--app-primary) !important;
+            border-color: var(--app-primary) !important;
+            box-shadow: none;
+        }
+
+        .btn-primary:hover *,
+        .btn-primary:focus *,
+        .btn-primary:active * {
+            color: #ffffff !important;
         }
 
         .text-primary,
@@ -92,6 +113,7 @@
 
         .logo-img {
             max-height: 44px;
+            max-width: 180px;
             width: auto;
             object-fit: contain;
         }
@@ -123,11 +145,46 @@
             border-color: color-mix(in srgb, var(--app-primary) 10%, #e5e9f2);
         }
 
+        .nk-header .nk-quick-nav-icon,
+        .nk-header .dropdown-toggle,
+        .nk-header .dark-switch {
+            border-radius: 8px;
+        }
+
+        .nk-header .nk-quick-nav-icon:hover,
+        .nk-header .dropdown-toggle:hover,
+        .nk-header .dark-switch:hover,
+        .nk-header .dark-switch.active {
+            background-color: transparent !important;
+        }
+
+        .nk-header .nk-header-tools .dropdown-toggle::before,
+        .nk-header .nk-header-tools .dropdown-toggle::after,
+        .nk-header .nk-header-tools .nk-quick-nav-icon::before,
+        .nk-header .nk-header-tools .nk-quick-nav-icon::after {
+            opacity: 0 !important;
+            background-color: transparent !important;
+            box-shadow: none !important;
+        }
+
+        .nk-header .user-toggle:hover,
+        .nk-header .dropdown-toggle:hover .user-name,
+        .nk-header .dropdown-toggle:hover .dropdown-indicator {
+            color: var(--app-primary) !important;
+            background-color: transparent !important;
+        }
+
+        .nk-header .dropdown-toggle:hover .user-avatar,
+        .nk-header .dropdown-toggle:hover .user-avatar .icon {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, var(--app-primary), var(--app-secondary)) !important;
+        }
+
         .dropdown-menu .link-list a:hover,
         .dropdown-menu .link-list-menu a:hover,
         .dropdown-menu .link-list-menu a.active {
             color: var(--app-primary) !important;
-            background-color: var(--app-primary-soft);
+            background-color: transparent !important;
         }
 
         .dropdown-menu .link-list a:hover .icon,
@@ -144,23 +201,48 @@
             color: var(--app-primary) !important;
         }
 
-        .nk-sidebar .nk-menu-link:hover,
+        .nk-sidebar .nk-sidebar-menu {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .nk-sidebar .nk-menu > .nk-menu-item {
+            margin: 2px 0;
+        }
+
+        .nk-sidebar .nk-menu > .nk-menu-item > .nk-menu-link {
+            margin: 0;
+            padding: 0.625rem 14px;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .nk-sidebar .nk-menu-icon {
+            width: 28px;
+            min-width: 28px;
+            margin-right: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nk-sidebar .nk-menu > .nk-menu-item > .nk-menu-link:hover,
+        .nk-sidebar .nk-menu > .nk-menu-item.active > .nk-menu-link,
+        .nk-sidebar .nk-menu > .nk-menu-item.current-menu > .nk-menu-link,
+        .nk-sidebar .nk-menu > .nk-menu-item.has-sub.active > .nk-menu-link {
+            background-color: #ffffff !important;
+            border-radius: 8px !important;
+        }
+
         .nk-sidebar .nk-menu-item.active > .nk-menu-link,
         .nk-sidebar .nk-menu-item.current-menu > .nk-menu-link,
-        .nk-sidebar .nk-menu-item.has-sub.active > .nk-menu-link {
-            color: var(--app-primary) !important;
-            background-color: var(--app-primary-soft);
-        }
-
-        .nk-sidebar .nk-menu-link:hover .nk-menu-icon,
+        .nk-sidebar .nk-menu > .nk-menu-item > .nk-menu-link:hover,
+        .nk-sidebar .nk-menu > .nk-menu-item > .nk-menu-link:hover .nk-menu-icon,
+        .nk-sidebar .nk-menu > .nk-menu-item > .nk-menu-link:hover .nk-menu-text,
         .nk-sidebar .nk-menu-item.active > .nk-menu-link .nk-menu-icon,
         .nk-sidebar .nk-menu-item.current-menu > .nk-menu-link .nk-menu-icon,
-        .nk-sidebar .nk-menu-item.has-sub.active > .nk-menu-link .nk-menu-icon {
-            color: var(--app-primary) !important;
-        }
-
-        .nk-sidebar .nk-menu-sub .nk-menu-link:hover,
-        .nk-sidebar .nk-menu-sub .nk-menu-item.active > .nk-menu-link {
+        .nk-sidebar .nk-menu-item.active > .nk-menu-link .nk-menu-text,
+        .nk-sidebar .nk-menu-item.current-menu > .nk-menu-link .nk-menu-text {
             color: var(--app-primary) !important;
         }
 
@@ -250,13 +332,53 @@
             border-color: color-mix(in srgb, var(--app-primary) 24%, #203247);
         }
 
-        .dark-mode .dropdown-menu .link-list a:hover,
-        .dark-mode .dropdown-menu .link-list-menu a:hover,
-        .dark-mode .dropdown-menu .link-list-menu a.active,
+        .dark-mode .nk-sidebar .nk-menu > .nk-menu-item > .nk-menu-link:hover,
+        .dark-mode .nk-sidebar .nk-menu > .nk-menu-item.active > .nk-menu-link,
+        .dark-mode .nk-sidebar .nk-menu > .nk-menu-item.current-menu > .nk-menu-link,
+        .dark-mode .nk-sidebar .nk-menu > .nk-menu-item.has-sub.active > .nk-menu-link {
+            background-color: #1d2d40 !important;
+            border-radius: 8px !important;
+        }
+
+        .dark-mode .nk-sidebar .nk-menu > .nk-menu-item > .nk-menu-link:hover,
+        .dark-mode .nk-sidebar .nk-menu > .nk-menu-item > .nk-menu-link:hover .nk-menu-icon,
+        .dark-mode .nk-sidebar .nk-menu > .nk-menu-item > .nk-menu-link:hover .nk-menu-text,
+        .dark-mode .nk-sidebar .nk-menu-item.active > .nk-menu-link,
+        .dark-mode .nk-sidebar .nk-menu-item.current-menu > .nk-menu-link,
+        .dark-mode .nk-sidebar .nk-menu-item.active > .nk-menu-link .nk-menu-icon,
+        .dark-mode .nk-sidebar .nk-menu-item.current-menu > .nk-menu-link .nk-menu-icon,
+        .dark-mode .nk-sidebar .nk-menu-item.active > .nk-menu-link .nk-menu-text,
+        .dark-mode .nk-sidebar .nk-menu-item.current-menu > .nk-menu-link .nk-menu-text {
+            color: #ffffff !important;
+        }
+
+        .dark-mode .nk-sidebar .nk-menu-sub .nk-menu-link {
+            color: #9cabbd !important;
+        }
+
+        .dark-mode .nk-sidebar .nk-menu-sub .nk-menu-link:hover,
+        .dark-mode .nk-sidebar .nk-menu-sub .active > .nk-menu-link {
+            color: var(--app-primary) !important;
+            background-color: transparent !important;
+        }
+
+        .dark-mode .nk-header .dropdown-toggle:hover .user-avatar,
+        .dark-mode .nk-header .dropdown-toggle:hover .user-avatar .icon {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, var(--app-primary), var(--app-secondary)) !important;
+        }
+
         .dark-mode .page-link:hover,
         .dark-mode .page-link:focus {
             background-color: color-mix(in srgb, var(--app-primary) 24%, #101924) !important;
             color: #ffffff !important;
+        }
+
+        .dark-mode .dropdown-menu .link-list a:hover,
+        .dark-mode .dropdown-menu .link-list-menu a:hover,
+        .dark-mode .dropdown-menu .link-list-menu a.active {
+            color: var(--app-primary) !important;
+            background-color: transparent !important;
         }
 
         .nk-tb-actions {
@@ -294,17 +416,32 @@
             position: static !important;
         }
 
-        div.dt-container div.dt-processing {
-            box-shadow: none;
-            margin-top: -20px !important;
+        div.dt-container div.dt-processing,
+        div.dataTables_wrapper div.dataTables_processing {
+            width: auto;
+            min-width: 150px;
+            margin: 0 !important;
+            padding: 0.875rem 1.125rem;
+            transform: translate(-50%, -50%);
+            border: 1px solid #e5e9f2;
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(31, 43, 58, 0.08);
+            color: #526484;
+            font-weight: 700;
+            z-index: 3;
         }
 
-        #myTable_processing {
-            display: none !important;
+        .df-table-loader {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.625rem;
+            white-space: nowrap;
         }
 
         .nk-menu-sub .nk-menu-link {
-            padding: 0.625rem 20px 0.625rem 20px;
+            padding: 0.625rem 20px;
             color: #6e82a5;
             font-family: 'Nunito', sans-serif;
             font-weight: 700;
@@ -320,39 +457,6 @@
 
         .btn-primary {
             border: none !important;
-        }
-
-        #shimmer-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #f6f7f8;
-            background-image: linear-gradient(110deg,
-                rgba(246, 247, 248, 0) 20%,
-                rgba(237, 238, 241, 0.8) 50%,
-                rgba(246, 247, 248, 0) 80%
-            );
-            background-repeat: no-repeat;
-            background-size: 250% 250%;
-            display: flex;
-            z-index: 9999;
-            animation: shimmer 2s infinite linear;
-        }
-
-        .dark-mode #shimmer-overlay {
-            background: #1a1a2e;
-            background-image: linear-gradient(110deg,
-                rgba(26, 26, 46, 0) 20%,
-                rgba(37, 37, 71, 0.8) 50%,
-                rgba(26, 26, 46, 0) 80%
-            );
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -150% -150%; }
-            100% { background-position: 150% 150%; }
         }
 
         .is-invalid-quill .ql-toolbar,
@@ -371,13 +475,15 @@
         .ql-editor {
             font-size: 15px;
         }
+
+        .admin-content-container {
+            max-width: 1540px !important;
+        }
     </style>
     @stack('styles')
 </head>
 
 <body class="nk-body bg-white has-sidebar no-touch nk-nio-theme" cz-shortcut-listen="true">
-    <div id="shimmer-overlay"></div>
-
     <div class="nk-app-root">
         <div class="nk-main">
             @include('admin.layouts.flash')
@@ -385,7 +491,7 @@
             <div class="nk-wrap">
                 @include('admin.layouts.header')
                 <div class="nk-content nk-content-fluid">
-                    <div class="container-xl wide-lg">
+                    <div class="container-xl wide-lg admin-content-container">
                         @yield('content')
                     </div>
                 </div>
@@ -484,9 +590,18 @@
     <script src="{{ asset('assets/admin/js/editors.js?ver=3.3.0') }}"></script>
 
     <script type="text/javascript">
-        $(window).on('load', function() {
-            $('#shimmer-overlay').fadeOut('slow');
-        });
+        if ($.fn.dataTable) {
+            $.extend(true, $.fn.dataTable.defaults, {
+                language: {
+                    processing: `
+                        <span class="df-table-loader">
+                            <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
+                            <span>Loading...</span>
+                        </span>
+                    `
+                }
+            });
+        }
 
         $(document).ready(function() {
             function initializeSelect2Fields($scope, options = {}) {
@@ -597,41 +712,6 @@
                 applyTheme(isDark);
                 setCookie('darkMode', isDark, 365);
             });
-        });
-
-        $(document).ajaxStart(function() {
-            if (window.isAutoReload) return;
-
-            let table = $('table');
-            if(!table.length) return;
-
-            table.find('tbody').css('opacity', '0');
-            $('.loadingMessage').remove();
-            table.before(`
-                <div class="loadingMessage text-center my-3">
-                    <span class="spinner-border text-primary" role="status"></span>
-                    <h5 class="mt-2">Processing. Please Wait<span class="dots">.</span></h5>
-                </div>
-            `);
-
-            let dots = 1;
-            window.loadingInterval = setInterval(function() {
-                dots = dots % 3 + 1;
-                $('.loadingMessage .dots').text('.'.repeat(dots));
-            }, 500);
-
-            $('.loadingMessage').show();
-        });
-
-        $(document).ajaxStop(function() {
-            if (window.isAutoReload) {
-                window.isAutoReload = false;
-                return;
-            }
-
-            clearInterval(window.loadingInterval);
-            $('table tbody').css('opacity', '1').show();
-            $('.loadingMessage').hide();
         });
 
         setInterval(function() {

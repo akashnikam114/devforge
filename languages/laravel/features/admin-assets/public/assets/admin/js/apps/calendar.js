@@ -288,6 +288,12 @@
       return $cat;
     }
     ;
+    function removePopover() {
+      var fcPopover = document.querySelectorAll('.event-popover');
+      fcPopover.forEach(function (elm) {
+        elm.remove();
+      });
+    }
     NioApp.Select2('.select-calendar-theme', {
       templateResult: customCalSelect
     });

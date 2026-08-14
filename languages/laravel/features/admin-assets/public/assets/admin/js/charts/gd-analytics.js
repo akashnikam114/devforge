@@ -207,11 +207,11 @@
           borderWidth: 1,
           color: '#ccd7e2',
           enableZoom: false,
-          hoverColor: '#6baafe',
+          hoverColor: '#9cabff',
           hoverOpacity: null,
           normalizeFunction: 'linear',
-          scaleColors: ['#ccd7e2', '#3a8dfe'],
-          selectedColor: '#0971fe',
+          scaleColors: ['#ccd7e2', '#798bff'],
+          selectedColor: '#6576ff',
           showTooltip: true,
           values: map_data.data,
           onLabelShow: function onLabelShow(event, label, code) {
@@ -234,7 +234,7 @@
     legend: false,
     datasets: [{
       borderColor: "#fff",
-      background: ["#6baafe", "#b8acff", "#7de1f8"],
+      background: ["#9cabff", "#b8acff", "#7de1f8"],
       data: [84.5, 14.2, 1.3]
     }]
   };
@@ -244,7 +244,7 @@
     legend: false,
     datasets: [{
       borderColor: "#fff",
-      background: ["#3a8dfe", "#b8acff", "#ffa9ce", "#f9db7b"],
+      background: ["#798bff", "#b8acff", "#ffa9ce", "#f9db7b"],
       data: [4305, 859, 482, 138]
     }]
   };
@@ -275,7 +275,6 @@
           plugins: {
             legend: {
               display: _get_data.legend ? _get_data.legend : false,
-              rtl: NioApp.State.isRTL,
               labels: {
                 boxWidth: 12,
                 padding: 20,
@@ -325,8 +324,8 @@
     lineTension: .1,
     datasets: [{
       label: "Organic Search",
-      color: "#3a8dfe",
-      background: NioApp.hexRGB('#3a8dfe', .25),
+      color: "#798bff",
+      background: NioApp.hexRGB('#798bff', .25),
       data: [110, 80, 125, 65, 95, 75, 90, 110, 80, 125, 70, 95]
     }]
   };
@@ -369,8 +368,8 @@
     lineTension: .1,
     datasets: [{
       label: "Bounce Rate",
-      color: "#3a8dfe",
-      background: NioApp.hexRGB('#3a8dfe', .25),
+      color: "#798bff",
+      background: NioApp.hexRGB('#798bff', .25),
       data: [110, 80, 125, 65, 95, 75, 90, 110, 80, 125, 70, 95]
     }]
   };
@@ -391,8 +390,8 @@
     lineTension: .1,
     datasets: [{
       label: "New Users",
-      color: "#3a8dfe",
-      background: NioApp.hexRGB('#3a8dfe', .25),
+      color: "#798bff",
+      background: NioApp.hexRGB('#798bff', .25),
       data: [110, 80, 125, 65, 95, 75, 90, 110, 80, 125, 70, 95]
     }]
   };
@@ -445,7 +444,6 @@
           plugins: {
             legend: {
               display: _get_data.legend ? _get_data.legend : false,
-              rtl: NioApp.State.isRTL,
               labels: {
                 boxWidth: 12,
                 padding: 20,
@@ -532,8 +530,8 @@
     lineTension: .1,
     datasets: [{
       label: "Active Users",
-      color: "#6baafe",
-      background: "#6baafe",
+      color: "#9cabff",
+      background: "#9cabff",
       data: [1110, 1220, 1310, 980, 900, 770, 1060, 830, 690, 730, 790, 950, 1100, 800, 1250, 850, 950, 450, 900, 1000, 1200, 1250, 900, 950, 1300, 1200, 1250, 650, 950, 750]
     }]
   };
@@ -567,7 +565,6 @@
           plugins: {
             legend: {
               display: _get_data.legend ? _get_data.legend : false,
-              rtl: NioApp.State.isRTL,
               labels: {
                 boxWidth: 12,
                 padding: 20,
@@ -657,15 +654,15 @@
     lineTension: .1,
     datasets: [{
       label: "Current Month",
-      color: "#a9cdff",
+      color: "#c4cefe",
       dash: [5, 5],
       background: "transparent",
       data: [3910, 4420, 4110, 5180, 4400, 5170, 6460, 8830, 5290, 5430, 4690, 4350, 4600, 5200, 5650, 6850, 6950, 4150, 4300, 6000, 6800, 2250, 6900, 7950, 6900, 4200, 6250, 7650, 8950, 9750]
     }, {
       label: "Current Month",
-      color: "#3a8dfe",
+      color: "#798bff",
       dash: [0, 0],
-      background: NioApp.hexRGB('#3a8dfe', .15),
+      background: NioApp.hexRGB('#798bff', .15),
       data: [4110, 4220, 4810, 5480, 4600, 5670, 6660, 4830, 5590, 5730, 4790, 4950, 5100, 5800, 5950, 5850, 5950, 4450, 4900, 8000, 7200, 7250, 7900, 8950, 6300, 7200, 7250, 7650, 6950, 4750]
     }]
   };
@@ -708,7 +705,6 @@
           plugins: {
             legend: {
               display: _get_data.legend ? _get_data.legend : false,
-              rtl: NioApp.State.isRTL,
               labels: {
                 boxWidth: 12,
                 padding: 20,
